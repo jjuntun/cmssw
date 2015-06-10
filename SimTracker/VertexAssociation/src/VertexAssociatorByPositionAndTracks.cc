@@ -1,5 +1,8 @@
+
+
 #include "SimTracker/VertexAssociation/interface/VertexAssociatorByPositionAndTracks.h"
 #include "SimTracker/VertexAssociation/interface/calculateVertexSharedTracks.h"
+#include "SimTracker/VertexAssociation/interface/calculateVertexSharedTracksMomentum.h"
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
@@ -8,6 +11,7 @@ VertexAssociatorByPositionAndTracks::VertexAssociatorByPositionAndTracks(const e
                                                                          double sigmaZ,
                                                                          double maxRecoZ,
                                                                          double sharedTrackFraction,
+																																				 double sharedMomentumFraction,
                                                                          const reco::RecoToSimCollection *trackRecoToSimAssociation,
                                                                          const reco::SimToRecoCollection *trackSimToRecoAssociation):
   productGetter_(productGetter),
@@ -15,6 +19,7 @@ VertexAssociatorByPositionAndTracks::VertexAssociatorByPositionAndTracks(const e
   sigmaZ_(sigmaZ),
   maxRecoZ_(maxRecoZ),
   sharedTrackFraction_(sharedTrackFraction),
+  sharedMomentumFraction_(sharedMomentumFraction),
   trackRecoToSimAssociation_(trackRecoToSimAssociation),
   trackSimToRecoAssociation_(trackSimToRecoAssociation)
 {}
@@ -34,6 +39,15 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
   for(size_t iReco=0; iReco != recoVertices.size(); ++iReco) {
     const reco::Vertex& recoVertex = recoVertices[iReco];
 
+		//calculate sum of momentums of reconstructed and simulated tracks
+		double allMomentums = 0;
+		double recoMomentums = 0;
+
+		for(auto iTrack = recoVertex.tracks_begin(); iTrack != recoVertex.tracks_end(); ++iTrack) {
+      	double pt = (*iTrack)->pt();
+      	recoMomentums += pt;
+		}
+
     // skip fake vertices
     if(std::abs(recoVertex.z()) > maxRecoZ_ || recoVertex.isFake() || !recoVertex.isValid() || recoVertex.ndof() < 0.)
       continue;
@@ -43,6 +57,13 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
     int current_event = -1;
     for(size_t iSim=0; iSim != simVertices.size(); ++iSim) {
       const TrackingVertex& simVertex = simVertices[iSim];
+
+			allMomentums = recoMomentums;
+
+			for(auto iTrack = simVertex.daughterTracks_begin(); iTrack != simVertex.daughterTracks_end(); ++iTrack) {
+      	double pt = (*iTrack)->pt();
+      	allMomentums += pt;
+			}
 
       // Associate only to primary vertices of the in-time pileup
       // events (BX=0, first vertex in each of the events)
@@ -60,11 +81,16 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
       if(zdiff < absZ_ && zdiff / recoVertex.zError() < sigmaZ_) {
         auto sharedTracks = calculateVertexSharedTracks(recoVertex, simVertex, *trackRecoToSimAssociation_);
         auto fraction = double(sharedTracks)/recoVertex.tracksSize();
-        if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
-          LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
-                                        << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks();
 
-          ret.insert(reco::VertexBaseRef(vCH, iReco), std::make_pair(TrackingVertexRef(tVCH, iSim), sharedTracks));
+        auto sharedMomentums = calculateVertexSharedTracksMomentum(simVertex, recoVertex, *trackSimToRecoAssociation_);
+        auto momentumFraction = double(sharedMomentums)/allMomentums;
+        if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
+					if(sharedMomentumFraction_ < 0 || momentumFraction > sharedMomentumFraction_) {
+		        LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
+		                                      << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks() << " momentum sum of shared tracks " << sharedMomentums << " momentum sum of tracks of simulated and reconstructed vertices " << allMomentums;
+
+		        ret.insert(reco::VertexBaseRef(vCH, iReco), std::make_pair(TrackingVertexRef(tVCH, iSim), sharedTracks));
+					}
         }
       }
     }
@@ -91,6 +117,16 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
   for(size_t iSim=0; iSim != simVertices.size(); ++iSim) {
     const TrackingVertex& simVertex = simVertices[iSim];
 
+		//calculate sum of momentums of reconstructed and simulated tracks
+		double allMomentums = 0;
+		double simMomentums = 0;
+
+		for(auto iTrack = simVertex.daughterTracks_begin(); iTrack != simVertex.daughterTracks_end(); ++iTrack) {
+	      	double pt = (*iTrack)->pt();
+	      	simMomentums += pt;
+		}
+
+
     // Associate only primary vertices of the in-time pileup
     // events (BX=0, first vertex in each of the events)
     if(simVertex.eventId().bunchCrossing() != 0) continue;
@@ -106,6 +142,13 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
     for(size_t iReco=0; iReco != recoVertices.size(); ++iReco) {
       const reco::Vertex& recoVertex = recoVertices[iReco];
 
+			allMomentums = simMomentums;
+
+			for(auto iTrack = recoVertex.tracks_begin(); iTrack != recoVertex.tracks_end(); ++iTrack) {
+      	double pt = (*iTrack)->pt();
+      	allMomentums += pt;
+			}
+
       // skip fake vertices
       if(std::abs(recoVertex.z()) > maxRecoZ_ || recoVertex.isFake() || !recoVertex.isValid() || recoVertex.ndof() < 0.)
         continue;
@@ -116,11 +159,16 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
       if(zdiff < absZ_ && zdiff / recoVertex.zError() < sigmaZ_) {
         auto sharedTracks = calculateVertexSharedTracks(simVertex, recoVertex, *trackSimToRecoAssociation_);
         auto fraction = double(sharedTracks)/recoVertex.tracksSize();
-        if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
-          LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
-                                        << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks();
 
-          ret.insert(TrackingVertexRef(tVCH, iSim), std::make_pair(reco::VertexBaseRef(vCH, iReco), sharedTracks));
+        auto sharedMomentums = calculateVertexSharedTracksMomentum(simVertex, recoVertex, *trackSimToRecoAssociation_);
+        auto momentumFraction = double(sharedMomentums)/allMomentums;
+        if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
+					if(sharedMomentumFraction_ < 0 || momentumFraction > sharedMomentumFraction_) {
+		        LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
+		                                      << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks() << " momentum sum of shared tracks " << sharedMomentums << " momentum sum of tracks of simulated and reconstructed vertices " << allMomentums;
+
+		        ret.insert(TrackingVertexRef(tVCH, iSim), std::make_pair(reco::VertexBaseRef(vCH, iReco), sharedTracks));
+					}
         }
       }
     }
@@ -132,3 +180,4 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
 
   return ret;
 }
+

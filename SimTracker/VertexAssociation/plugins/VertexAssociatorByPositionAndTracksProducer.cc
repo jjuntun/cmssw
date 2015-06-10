@@ -1,3 +1,8 @@
+
+
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/global/EDProducer.h"
+
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/global/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -28,6 +33,7 @@ private:
   const double sigmaZ_;
   const double maxRecoZ_;
   const double sharedTrackFraction_;
+	const double sharedMomentumFraction_;
 
   edm::EDGetTokenT<reco::RecoToSimCollection> trackRecoToSimAssociationToken_;
   edm::EDGetTokenT<reco::SimToRecoCollection> trackSimToRecoAssociationToken_;
@@ -38,6 +44,7 @@ VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracks
   sigmaZ_(config.getParameter<double>("sigmaZ")),
   maxRecoZ_(config.getParameter<double>("maxRecoZ")),
   sharedTrackFraction_(config.getParameter<double>("sharedTrackFraction")),
+	sharedMomentumFraction_(config.getParameter<double>("sharedMomentumFraction")),
   trackRecoToSimAssociationToken_(consumes<reco::RecoToSimCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
   trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation")))
 {
@@ -54,6 +61,7 @@ void VertexAssociatorByPositionAndTracksProducer::fillDescriptions(edm::Configur
   desc.add<double>("sigmaZ", 3.0);
   desc.add<double>("maxRecoZ", 1000.0);
   desc.add<double>("sharedTrackFraction", -1.0);
+	desc.add<double>("sharedMomentumFraction", -1.0);
 
   // Track-TrackingParticle association
   desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
@@ -73,6 +81,7 @@ void VertexAssociatorByPositionAndTracksProducer::produce(edm::StreamID, edm::Ev
                                                                     sigmaZ_,
                                                                     maxRecoZ_,
                                                                     sharedTrackFraction_,
+																																		sharedMomentumFraction_,
                                                                     recotosimCollectionH.product(),
                                                                     simtorecoCollectionH.product());
 
@@ -81,3 +90,4 @@ void VertexAssociatorByPositionAndTracksProducer::produce(edm::StreamID, edm::Ev
 }
 
 DEFINE_FWK_MODULE(VertexAssociatorByPositionAndTracksProducer);
+
