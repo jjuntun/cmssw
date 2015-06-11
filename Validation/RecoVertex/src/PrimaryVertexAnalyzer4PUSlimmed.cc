@@ -575,12 +575,23 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
 
 void PrimaryVertexAnalyzer4PUSlimmed::fillGenericGenVertexHistograms(
     const simPrimaryVertex& v) {
+	double weightedRecoMomentums = 0;
+	for(auto iTrack = v.recVtx.tracks_begin(); iTrack != v.recVtx.tracks_end(); ++iTrack) {
+      	double pt = (*iTrack)->pt();
+				float weight = v.recVtx.trackWeight(&iTrack);
+      	weightedRecoMomentums += weight*pt**2;
+	}
+
+
   if (v.eventId.event() == 0) {
     mes_["root_folder"]["GenPV_X"]->Fill(v.x);
     mes_["root_folder"]["GenPV_Y"]->Fill(v.y);
     mes_["root_folder"]["GenPV_Z"]->Fill(v.z);
     mes_["root_folder"]["GenPV_R"]->Fill(v.r);
+    mes_["root_folder"]["GenPV_Pt"]->Fill(sqrt(v.ptsq));		
+    mes_["root_folder"]["GenPV_WPt"]->Fill(sqrt(weightedRecoMomentums));		
     mes_["root_folder"]["GenPV_Pt2"]->Fill(v.ptsq);
+    mes_["root_folder"]["GenPV_WPt2"]->Fill(weightedRecoMomentums);
     mes_["root_folder"]["GenPV_NumTracks"]->Fill(v.nGenTrk);
     if (v.closest_vertex_distance_z > 0.)
       mes_["root_folder"]["GenPV_ClosestDistanceZ"]
@@ -590,7 +601,10 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenericGenVertexHistograms(
   mes_["root_folder"]["GenAllV_Y"]->Fill(v.y);
   mes_["root_folder"]["GenAllV_Z"]->Fill(v.z);
   mes_["root_folder"]["GenAllV_R"]->Fill(v.r);
+  mes_["root_folder"]["GenAllV_Pt"]->Fill(sqrt(v.ptsq));		
+  mes_["root_folder"]["GenAllV_WPt"]->Fill(sqrt(weightedRecoMomentums));		
   mes_["root_folder"]["GenAllV_Pt2"]->Fill(v.ptsq);
+  mes_["root_folder"]["GenAllV_WPt2"]->Fill(weightedRecoMomentums);
   mes_["root_folder"]["GenAllV_NumTracks"]->Fill(v.nGenTrk);
   if (v.closest_vertex_distance_z > 0.)
     mes_["root_folder"]["GenAllV_ClosestDistanceZ"]
@@ -604,7 +618,10 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
   mes_[label]["GenAllAssoc2Reco_Y"]->Fill(v.y);
   mes_[label]["GenAllAssoc2Reco_Z"]->Fill(v.z);
   mes_[label]["GenAllAssoc2Reco_R"]->Fill(v.r);
+  mes_[label]["GenAllAssoc2Reco_Pt"]->Fill(sqrt(v.ptsq));		
+  mes_[label]["GenAllAssoc2Reco_WPt"]->Fill(sqrt(weightedRecoMomentums));		
   mes_[label]["GenAllAssoc2Reco_Pt2"]->Fill(v.ptsq);
+  mes_[label]["GenAllAssoc2Reco_WPt2"]->Fill(weightedRecoMomentums);
   mes_[label]["GenAllAssoc2Reco_NumTracks"]->Fill(v.nGenTrk);
   if (v.closest_vertex_distance_z > 0.)
     mes_[label]["GenAllAssoc2Reco_ClosestDistanceZ"]
@@ -614,7 +631,10 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
     mes_[label]["GenAllAssoc2RecoMatched_Y"]->Fill(v.y);
     mes_[label]["GenAllAssoc2RecoMatched_Z"]->Fill(v.z);
     mes_[label]["GenAllAssoc2RecoMatched_R"]->Fill(v.r);
-    mes_[label]["GenAllAssoc2RecoMatched_Pt2"]->Fill(v.ptsq);
+		mes_[label]["GenAllAssoc2RecoMatched_Pt"]->Fill(sqrt(v.ptsq));		
+		mes_[label]["GenAllAssoc2RecoMatched_WPt"]->Fill(sqrt(weightedRecoMomentums));		
+		mes_[label]["GenAllAssoc2RecoMatched_Pt2"]->Fill(v.ptsq);
+		mes_[label]["GenAllAssoc2RecoMatched_WPt2"]->Fill(weightedRecoMomentums);
     mes_[label]["GenAllAssoc2RecoMatched_NumTracks"]->Fill(v.nGenTrk);
     if (v.closest_vertex_distance_z > 0.)
       mes_[label]["GenAllAssoc2RecoMatched_ClosestDistanceZ"]
