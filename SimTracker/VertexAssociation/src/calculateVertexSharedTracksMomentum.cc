@@ -2,8 +2,8 @@
 
 
 //Parameters :
-//						momentumAssociationMode = 0: pt sum, 1: weighted pt sum, 2: pt2 sum, 3: weighted pt2 sum
-unsigned int calculateVertexSharedTracksMomentum(const reco::Vertex& recoV, const TrackingVertex& simV, const reco::RecoToSimCollection& trackRecoToSimAssociation, int momentumAssociationMode) {
+//						momentumAssociationMode = "Pt": pt sum, "WPt": weighted pt sum, "Pt2": pt2 sum, "WPt2": weighted pt2 sum
+double calculateVertexSharedTracksMomentum(const reco::Vertex& recoV, const TrackingVertex& simV, const reco::RecoToSimCollection& trackRecoToSimAssociation, std::string momentumAssociationMode) {
   double sharedMomentums = 0;
   for(auto iTrack = recoV.tracks_begin(); iTrack != recoV.tracks_end(); ++iTrack) {
     auto found = trackRecoToSimAssociation.find(*iTrack);
@@ -18,24 +18,16 @@ unsigned int calculateVertexSharedTracksMomentum(const reco::Vertex& recoV, cons
           }) != simV.daughterTracks_end()) {
 				
 				double pt = (*(tp.first)).pt();
-        switch(momentumAssociationMode)	{
-						case 0 : 
+        if(momentumAssociationMode.compare("Pt"))
 							sharedMomentums += pt;
-							break;
-						case 1 : 
+				else if(momentumAssociationMode.compare("WPt"))
 							sharedMomentums += recoV.trackWeight(*iTrack)*pt;
-							break;
-						case 2 : 
+				else if(momentumAssociationMode.compare("Pt2"))
 							sharedMomentums += pt*pt;
-							break;
-						case 3 : 
+				else if(momentumAssociationMode.compare("WPt2"))
 							sharedMomentums += recoV.trackWeight(*iTrack)*pt*pt;
-							break;
-						default:
+				else
 							sharedMomentums += pt;
-							break;
-				}
-        break;
       }
     }
   }
@@ -43,7 +35,7 @@ unsigned int calculateVertexSharedTracksMomentum(const reco::Vertex& recoV, cons
   return sharedMomentums;
 }
 
-unsigned int calculateVertexSharedTracksMomentum(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation, int momentumAssociationMode) {
+double calculateVertexSharedTracksMomentum(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation, std::string momentumAssociationMode) {
   double sharedMomentums = 0;
   for(auto iTP = simV.daughterTracks_begin(); iTP != simV.daughterTracks_end(); ++iTP) {
     auto found = trackSimToRecoAssociation.find(*iTP);
@@ -58,24 +50,17 @@ unsigned int calculateVertexSharedTracksMomentum(const TrackingVertex& simV, con
           }) != recoV.tracks_end()) {
 
         double pt = (*(tk.first)).pt();
-				switch(momentumAssociationMode)	{
-						case 0 : 
+        if(momentumAssociationMode.compare("Pt"))
 							sharedMomentums += pt;
-							break;
-						case 1 : 
+				else if(momentumAssociationMode.compare("WPt"))
 							sharedMomentums += recoV.trackWeight(*iTP)*pt;
-							break;
-						case 2 : 
+				else if(momentumAssociationMode.compare("Pt2"))
 							sharedMomentums += pt*pt;
-							break;
-						case 3 : 
+				else if(momentumAssociationMode.compare("WPt2"))
 							sharedMomentums += recoV.trackWeight(*iTP)*pt*pt;
-							break;
-						default: 
+				else
 							sharedMomentums += pt;
-							break;
-				}
-        break;
+
       }
     }
   }

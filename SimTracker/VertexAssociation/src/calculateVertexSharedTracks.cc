@@ -17,6 +17,7 @@ unsigned int calculateVertexSharedTracks(const reco::Vertex& recoV, const Tracki
         break;
       }
     }
+
   }
 
   return sharedTracks;
@@ -24,6 +25,7 @@ unsigned int calculateVertexSharedTracks(const reco::Vertex& recoV, const Tracki
 
 unsigned int calculateVertexSharedTracks(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation) {
   unsigned int sharedTracks = 0;
+
   for(auto iTP = simV.daughterTracks_begin(); iTP != simV.daughterTracks_end(); ++iTP) {
     auto found = trackSimToRecoAssociation.find(*iTP);
 

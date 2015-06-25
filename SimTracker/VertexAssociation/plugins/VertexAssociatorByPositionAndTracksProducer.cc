@@ -37,7 +37,7 @@ private:
 
   edm::EDGetTokenT<reco::RecoToSimCollection> trackRecoToSimAssociationToken_;
   edm::EDGetTokenT<reco::SimToRecoCollection> trackSimToRecoAssociationToken_;
-	int momentumAssociationMode_;
+	std::string momentumAssociationMode_;
 };
 
 VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracksProducer(const edm::ParameterSet& config):
@@ -48,7 +48,7 @@ VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracks
 	sharedMomentumFraction_(config.getParameter<double>("sharedMomentumFraction")),
   trackRecoToSimAssociationToken_(consumes<reco::RecoToSimCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
   trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
-	momentumAssociationMode_(config.getParameter<int>("momentumAssociationMode"))
+	momentumAssociationMode_(config.getParameter<std::string>("momentumAssociationMode"))
 {
   produces<reco::VertexToTrackingVertexAssociator>();
 }
@@ -64,7 +64,7 @@ void VertexAssociatorByPositionAndTracksProducer::fillDescriptions(edm::Configur
   desc.add<double>("maxRecoZ", 1000.0);
   desc.add<double>("sharedTrackFraction", -1.0);
 	desc.add<double>("sharedMomentumFraction", -1.0);
-	desc.add<int>("momentumAssociationMode", 2);
+	desc.add<std::string>("momentumAssociationMode", "Pt2");
 
   // Track-TrackingParticle association
   desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
