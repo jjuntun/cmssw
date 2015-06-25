@@ -13,6 +13,8 @@
  * the quality in the association, i.e. multiple associations are
  * sorted by it in descending order.
  */
+
+
 class VertexAssociatorByPositionAndTracks : public reco::VertexToTrackingVertexAssociatorBaseImpl {
 public:
   VertexAssociatorByPositionAndTracks(const edm::EDProductGetter *productGetter,
@@ -22,7 +24,8 @@ public:
                                       double sharedTrackFraction,
 																			double sharedMomentumFraction,
                                       const reco::RecoToSimCollection *trackRecoToSimAssociation,
-                                      const reco::SimToRecoCollection *trackSimToRecoAssociation);
+                                      const reco::SimToRecoCollection *trackSimToRecoAssociation,
+																			std::string momentumSumType);
 
   virtual ~VertexAssociatorByPositionAndTracks();
 
@@ -45,6 +48,9 @@ private:
 
   const reco::RecoToSimCollection *trackRecoToSimAssociation_;
   const reco::SimToRecoCollection *trackSimToRecoAssociation_;
+
+	std::string momentumSumType_;
+
 };
 
 #endif

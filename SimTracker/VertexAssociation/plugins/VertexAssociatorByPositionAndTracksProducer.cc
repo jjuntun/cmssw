@@ -37,6 +37,7 @@ private:
 
   edm::EDGetTokenT<reco::RecoToSimCollection> trackRecoToSimAssociationToken_;
   edm::EDGetTokenT<reco::SimToRecoCollection> trackSimToRecoAssociationToken_;
+	int momentumAssociationMode_;
 };
 
 VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracksProducer(const edm::ParameterSet& config):
@@ -46,7 +47,8 @@ VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracks
   sharedTrackFraction_(config.getParameter<double>("sharedTrackFraction")),
 	sharedMomentumFraction_(config.getParameter<double>("sharedMomentumFraction")),
   trackRecoToSimAssociationToken_(consumes<reco::RecoToSimCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
-  trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation")))
+  trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
+	momentumAssociationMode_(config.getParameter<int>("momentumAssociationMode"))
 {
   produces<reco::VertexToTrackingVertexAssociator>();
 }
@@ -62,6 +64,7 @@ void VertexAssociatorByPositionAndTracksProducer::fillDescriptions(edm::Configur
   desc.add<double>("maxRecoZ", 1000.0);
   desc.add<double>("sharedTrackFraction", -1.0);
 	desc.add<double>("sharedMomentumFraction", -1.0);
+	desc.add<int>("momentumAssociationMode", 2);
 
   // Track-TrackingParticle association
   desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
@@ -83,7 +86,8 @@ void VertexAssociatorByPositionAndTracksProducer::produce(edm::StreamID, edm::Ev
                                                                     sharedTrackFraction_,
 																																		sharedMomentumFraction_,
                                                                     recotosimCollectionH.product(),
-                                                                    simtorecoCollectionH.product());
+                                                                    simtorecoCollectionH.product(),
+																																		momentumAssociationMode_);
 
   auto toPut = std::make_unique<reco::VertexToTrackingVertexAssociator>(std::move(impl));
   iEvent.put(std::move(toPut));

@@ -129,7 +129,7 @@ class PrimaryVertexAnalyzer4PUSlimmed : public DQMEDAnalyzer {
   };
 
  public:
-  explicit PrimaryVertexAnalyzer4PUSlimmed(const edm::ParameterSet&, double[], size_t);
+  explicit PrimaryVertexAnalyzer4PUSlimmed(const edm::ParameterSet&);
   ~PrimaryVertexAnalyzer4PUSlimmed();
 
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
@@ -145,13 +145,11 @@ class PrimaryVertexAnalyzer4PUSlimmed : public DQMEDAnalyzer {
                              const reco::VertexRecoToSimCollection&,
                              const std::vector<simPrimaryVertex>&);
   bool matchRecoTrack2SimSignal(const reco::TrackBaseRef&);
-  void fillGenericGenVertexHistograms(const simPrimaryVertex &v,
-																			const double weightCoeff);
+  void fillGenericGenVertexHistograms(const simPrimaryVertex &v);
   // void fillGenericRecoVertexHistograms(const std::string &,
   //                                      const simPrimaryVertex &v);
   void fillRecoAssociatedGenVertexHistograms(const std::string &,
-                                             const simPrimaryVertex &v,
-																						 const double weightCoeff);
+                                             const simPrimaryVertex &v);
   void fillGenAssociatedRecoVertexHistograms(const std::string &,
                                              int,
                                              recoPrimaryVertex &v);
@@ -178,8 +176,6 @@ class PrimaryVertexAnalyzer4PUSlimmed : public DQMEDAnalyzer {
   double sigma_z_match_;
   double abs_z_match_;
   std::string root_folder_;
-	double *weightCoeffs_;
-	size_t elemsInWeightCoeffs;
 
   std::map<std::string, std::map<std::string, MonitorElement*> > mes_;
   const reco::RecoToSimCollection *r2s_;

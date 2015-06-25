@@ -16,6 +16,7 @@
 // associator
 #include "SimTracker/Records/interface/TrackAssociatorRecord.h"
 #include "SimTracker/VertexAssociation/interface/calculateVertexSharedTracks.h"
+#include "SimTracker/VertexAssociation/interface/calculateVertexSharedTracksMomentumSum.h"
 
 // DQM
 #include "DQMServices/Core/interface/MonitorElement.h"
@@ -122,8 +123,14 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
       i.book1D("GenPV_Z", "GeneratedPV_Z", 120, -60., 60.);
   mes_["root_folder"]["GenPV_R"] =
       i.book1D("GenPV_R", "GeneratedPV_R", 120, 0, 0.6);
+  mes_["root_folder"]["GenPV_Pt"] =
+      i.book1D("GenPV_Pt", "GeneratedPV_Sum-pt", 15, &log_pt2_bins[0]);
+  mes_["root_folder"]["GenPV_WPt"] =
+      i.book1D("GenPV_WPt", "GeneratedPV_Sum-wpt", 15, &log_pt2_bins[0]);
   mes_["root_folder"]["GenPV_Pt2"] =
-      i.book1D("GenPV_Pt2", "GeneratedPV_Sum-pt2", 15, &log_pt2_bins[0]);
+      i.book1D("GenPV_Pt2", "GeneratedPV_Sum-pt2", 15, &log_pt2_bins[0]);	
+  mes_["root_folder"]["GenPV_WPt2"] =
+      i.book1D("GenPV_WPt2", "GeneratedPV_Sum-wpt2", 15, &log_pt2_bins[0]);
   mes_["root_folder"]["GenPV_NumTracks"] =
       i.book1D("GenPV_NumTracks", "GeneratedPV_NumTracks", 24, &log_ntrk_bins[0]);
   mes_["root_folder"]["GenPV_ClosestDistanceZ"] =
@@ -141,8 +148,14 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
       i.book1D("GenAllV_Z", "GeneratedAllV_Z", 120, -60, 60);
   mes_["root_folder"]["GenAllV_R"] =
       i.book1D("GenAllV_R", "GeneratedAllV_R", 120, 0, 0.6);
+  mes_["root_folder"]["GenAllV_Pt"] =
+      i.book1D("GenAllV_Pt", "GeneratedAllV_Sum-pt", 15, &log_pt2_bins[0]);
+  mes_["root_folder"]["GenAllV_WPt"] =
+      i.book1D("GenAllV_WPt", "GeneratedAllV_Sum-wpt", 15, &log_pt2_bins[0]);
   mes_["root_folder"]["GenAllV_Pt2"] =
       i.book1D("GenAllV_Pt2", "GeneratedAllV_Sum-pt2", 15, &log_pt2_bins[0]);
+  mes_["root_folder"]["GenAllV_WPt2"] =
+      i.book1D("GenAllV_WPt2", "GeneratedAllV_Sum-wpt2", 15, &log_pt2_bins[0]);
   mes_["root_folder"]["GenAllV_NumTracks"] =
       i.book1D("GenAllV_NumTracks", "GeneratedAllV_NumTracks", 24, &log_ntrk_bins[0]);
   mes_["root_folder"]["GenAllV_ClosestDistanceZ"] =
@@ -266,8 +279,17 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
         "GenAllAssoc2Reco_Z", "GeneratedAllAssoc2Reco_Z", 120, -60, 60);
     mes_[label]["GenAllAssoc2Reco_R"] =
         i.book1D("GenAllAssoc2Reco_R", "GeneratedAllAssoc2Reco_R", 120, 0, 0.6);
+    mes_[label]["GenAllAssoc2Reco_Pt"] =
+        i.book1D("GenAllAssoc2Reco_Pt", "GeneratedAllAssoc2Reco_Sum-pt", 15,
+                 &log_pt2_bins[0]);
+    mes_[label]["GenAllAssoc2Reco_WPt"] =
+        i.book1D("GenAllAssoc2Reco_WPt", "GeneratedAllAssoc2Reco_Sum-wpt", 15,
+                 &log_pt2_bins[0]);
     mes_[label]["GenAllAssoc2Reco_Pt2"] =
         i.book1D("GenAllAssoc2Reco_Pt2", "GeneratedAllAssoc2Reco_Sum-pt2", 15,
+                 &log_pt2_bins[0]);
+    mes_[label]["GenAllAssoc2Reco_WPt2"] =
+        i.book1D("GenAllAssoc2Reco_WPt2", "GeneratedAllAssoc2Reco_Sum-wpt2", 15,
                  &log_pt2_bins[0]);
     mes_[label]["GenAllAssoc2Reco_NumTracks"] =
         i.book1D("GenAllAssoc2Reco_NumTracks",
@@ -293,9 +315,18 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
     mes_[label]["GenAllAssoc2RecoMatched_R"] =
         i.book1D("GenAllAssoc2RecoMatched_R", "GeneratedAllAssoc2RecoMatched_R",
                  120, 0, 0.6);
+    mes_[label]["GenAllAssoc2RecoMatched_Pt"] =
+        i.book1D("GenAllAssoc2RecoMatched_Pt",
+                 "GeneratedAllAssoc2RecoMatched_Sum-pt", 15, &log_pt2_bins[0]);
+    mes_[label]["GenAllAssoc2RecoMatched_WPt"] =
+        i.book1D("GenAllAssoc2RecoMatched_WPt",
+                 "GeneratedAllAssoc2RecoMatched_Sum-wpt", 15, &log_pt2_bins[0]);
     mes_[label]["GenAllAssoc2RecoMatched_Pt2"] =
         i.book1D("GenAllAssoc2RecoMatched_Pt2",
                  "GeneratedAllAssoc2RecoMatched_Sum-pt2", 15, &log_pt2_bins[0]);
+    mes_[label]["GenAllAssoc2RecoMatched_WPt2"] =
+        i.book1D("GenAllAssoc2RecoMatched_WPt2",
+                 "GeneratedAllAssoc2RecoMatched_Sum-wpt2", 15, &log_pt2_bins[0]);
     mes_[label]["GenAllAssoc2RecoMatched_NumTracks"] =
         i.book1D("GenAllAssoc2RecoMatched_NumTracks",
                  "GeneratedAllAssoc2RecoMatched_NumTracks", 24, &log_ntrk_bins[0]);
@@ -567,7 +598,15 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched", 50, 0, 1);
 
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim", 50, 0, 1);		
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched", 50, 0, 1);
   }
@@ -575,23 +614,29 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
 
 void PrimaryVertexAnalyzer4PUSlimmed::fillGenericGenVertexHistograms(
     const simPrimaryVertex& v) {
-	double weightedRecoMomentums = 0;
-	for(auto iTrack = v.recVtx.tracks_begin(); iTrack != v.recVtx.tracks_end(); ++iTrack) {
-      	double pt = (*iTrack)->pt();
-				float weight = v.recVtx.trackWeight(&iTrack);
-      	weightedRecoMomentums += weight*pt**2;
+/*	double recoMomentumSum = 0;
+	double weightedRecoMomentumSum = 0;
+	double weightedRecoMomentum2Sum = 0;
+	for(auto iRecoVertex = v.rec_vertices.begin(); iRecoVertex != v.rec_vertices.end(); 
+			++iRecoVertex)	{
+		for(auto iTrack = (*iRecoVertex)->tracks_begin(); iTrack != (*iRecoVertex)->tracks_end(); ++iTrack) {
+    	double pt = (*iTrack)->pt();
+			float weight = (*iRecoVertex)->trackWeight(*iTrack);
+			recoMomentumSum += pt;			
+			weightedRecoMomentumSum += weight*pt;
+    	weightedRecoMomentum2Sum += weight*pow(pt,2);
+		}
 	}
-
-
+*/
   if (v.eventId.event() == 0) {
     mes_["root_folder"]["GenPV_X"]->Fill(v.x);
     mes_["root_folder"]["GenPV_Y"]->Fill(v.y);
     mes_["root_folder"]["GenPV_Z"]->Fill(v.z);
     mes_["root_folder"]["GenPV_R"]->Fill(v.r);
-    mes_["root_folder"]["GenPV_Pt"]->Fill(sqrt(v.ptsq));		
-    mes_["root_folder"]["GenPV_WPt"]->Fill(sqrt(weightedRecoMomentums));		
+//    mes_["root_folder"]["GenPV_Pt"]->Fill(recoMomentumSum);	
+//    mes_["root_folder"]["GenPV_WPt"]->Fill(sqrt(weightedRecoMomentumSum));		
     mes_["root_folder"]["GenPV_Pt2"]->Fill(v.ptsq);
-    mes_["root_folder"]["GenPV_WPt2"]->Fill(weightedRecoMomentums);
+//    mes_["root_folder"]["GenPV_WPt2"]->Fill(weightedRecoMomentum2Sum);
     mes_["root_folder"]["GenPV_NumTracks"]->Fill(v.nGenTrk);
     if (v.closest_vertex_distance_z > 0.)
       mes_["root_folder"]["GenPV_ClosestDistanceZ"]
@@ -601,10 +646,10 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenericGenVertexHistograms(
   mes_["root_folder"]["GenAllV_Y"]->Fill(v.y);
   mes_["root_folder"]["GenAllV_Z"]->Fill(v.z);
   mes_["root_folder"]["GenAllV_R"]->Fill(v.r);
-  mes_["root_folder"]["GenAllV_Pt"]->Fill(sqrt(v.ptsq));		
-  mes_["root_folder"]["GenAllV_WPt"]->Fill(sqrt(weightedRecoMomentums));		
+//  mes_["root_folder"]["GenAllV_Pt"]->Fill(recoMomentumSum);		
+//  mes_["root_folder"]["GenAllV_WPt"]->Fill(weightedRecoMomentumSum);		
   mes_["root_folder"]["GenAllV_Pt2"]->Fill(v.ptsq);
-  mes_["root_folder"]["GenAllV_WPt2"]->Fill(weightedRecoMomentums);
+//  mes_["root_folder"]["GenAllV_WPt2"]->Fill(weightedRecoMomentum2Sum);
   mes_["root_folder"]["GenAllV_NumTracks"]->Fill(v.nGenTrk);
   if (v.closest_vertex_distance_z > 0.)
     mes_["root_folder"]["GenAllV_ClosestDistanceZ"]
@@ -614,14 +659,29 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenericGenVertexHistograms(
 void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
     const std::string& label,
     const PrimaryVertexAnalyzer4PUSlimmed::simPrimaryVertex& v) {
+/*	double recoMomentumSum = 0;
+	double weightedRecoMomentumSum = 0;
+	double weightedRecoMomentum2Sum = 0;
+
+	for(auto iRecoVertex = v.rec_vertices.begin(); iRecoVertex != v.rec_vertices.end(); 
+			++iRecoVertex)	{
+		for(auto iTrack = (*iRecoVertex)->tracks_begin(); iTrack != (*iRecoVertex)->tracks_end(); ++iTrack) {
+    	double pt = (*iTrack)->pt();
+			float weight = (*iRecoVertex)->trackWeight(*iTrack);
+			recoMomentumSum += pt;			
+			weightedRecoMomentumSum += weight*pt;
+    	weightedRecoMomentum2Sum += weight*pow(pt,2);
+		}
+	}
+*/
   mes_[label]["GenAllAssoc2Reco_X"]->Fill(v.x);
   mes_[label]["GenAllAssoc2Reco_Y"]->Fill(v.y);
   mes_[label]["GenAllAssoc2Reco_Z"]->Fill(v.z);
   mes_[label]["GenAllAssoc2Reco_R"]->Fill(v.r);
-  mes_[label]["GenAllAssoc2Reco_Pt"]->Fill(sqrt(v.ptsq));		
-  mes_[label]["GenAllAssoc2Reco_WPt"]->Fill(sqrt(weightedRecoMomentums));		
+//  mes_[label]["GenAllAssoc2Reco_Pt"]->Fill(recoMomentumSum);		
+//  mes_[label]["GenAllAssoc2Reco_WPt"]->Fill(weightedRecoMomentumSum);		
   mes_[label]["GenAllAssoc2Reco_Pt2"]->Fill(v.ptsq);
-  mes_[label]["GenAllAssoc2Reco_WPt2"]->Fill(weightedRecoMomentums);
+//  mes_[label]["GenAllAssoc2Reco_WPt2"]->Fill(weightedRecoMomentum2Sum);
   mes_[label]["GenAllAssoc2Reco_NumTracks"]->Fill(v.nGenTrk);
   if (v.closest_vertex_distance_z > 0.)
     mes_[label]["GenAllAssoc2Reco_ClosestDistanceZ"]
@@ -631,10 +691,10 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
     mes_[label]["GenAllAssoc2RecoMatched_Y"]->Fill(v.y);
     mes_[label]["GenAllAssoc2RecoMatched_Z"]->Fill(v.z);
     mes_[label]["GenAllAssoc2RecoMatched_R"]->Fill(v.r);
-		mes_[label]["GenAllAssoc2RecoMatched_Pt"]->Fill(sqrt(v.ptsq));		
-		mes_[label]["GenAllAssoc2RecoMatched_WPt"]->Fill(sqrt(weightedRecoMomentums));		
+//		mes_[label]["GenAllAssoc2RecoMatched_Pt"]->Fill(recoMomentumSum);		
+//		mes_[label]["GenAllAssoc2RecoMatched_WPt"]->Fill(weightedRecoMomentumSum);		
 		mes_[label]["GenAllAssoc2RecoMatched_Pt2"]->Fill(v.ptsq);
-		mes_[label]["GenAllAssoc2RecoMatched_WPt2"]->Fill(weightedRecoMomentums);
+//		mes_[label]["GenAllAssoc2RecoMatched_WPt2"]->Fill(weightedRecoMomentum2Sum);
     mes_[label]["GenAllAssoc2RecoMatched_NumTracks"]->Fill(v.nGenTrk);
     if (v.closest_vertex_distance_z > 0.)
       mes_[label]["GenAllAssoc2RecoMatched_ClosestDistanceZ"]
@@ -657,6 +717,15 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
     const std::string& label,
     int num_pileup_vertices,
     PrimaryVertexAnalyzer4PUSlimmed::recoPrimaryVertex& v) {
+
+	for(auto iTrack = recoVertex.tracks_begin(); iTrack != recoVertex.tracks_end(); ++iTrack) {
+  	double pt = (*iTrack)->pt();
+  	allMomentums += pt;
+	}
+
+	auto momentumFractions = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, momentumAssociationMode_);
+
+
   mes_[label]["RecoAllAssoc2Gen_X"]->Fill(v.x);
   mes_[label]["RecoAllAssoc2Gen_Y"]->Fill(v.y);
   mes_[label]["RecoAllAssoc2Gen_Z"]->Fill(v.z);
@@ -731,20 +800,60 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
 
 
   std::string prefix;
+	std::string ptPrefix;
   if(v.sim_vertices.size() == 1) {
     prefix = "RecoAllAssoc2GenSingleMatched_SharedTrackFraction";
+		ptPrefix = "RecoAllAssoc2GenSingleMatched_Shared";
   }
   else if(v.sim_vertices.size() > 1) {
     prefix = "RecoAllAssoc2GenMultiMatched_SharedTrackFraction";
+		ptPrefix = "RecoAllAssoc2GenMultiMatched_SharedTrack";
   }
 
   for(size_t i=0; i<v.sim_vertices.size(); ++i) {
     const double sharedTracks = v.sim_vertices_num_shared_tracks[i];
     const simPrimaryVertex *simV = v.sim_vertices_internal[i];
+		
+
+		double momentumSharedPtSum = calculateVertexSharedTracksMomentumSum(simV->simVtx, v.recVtx, *r2s_, "Pt");
+		double momentumSharedWPtSum = calculateVertexSharedTracksMomentumSum(simV->simVtx, v.recVtx, *r2s_, "WPt");
+		double momentumSharedPt2Sum = calculateVertexSharedTracksMomentumSum(simV->simVtx, v.recVtx, *r2s_, "Pt2");
+		double momentumSharedWPt2Sum = calculateVertexSharedTracksMomentumSum(simV->simVtx, v.recVtx, *r2s_, "WPt2");
+
+		double matchedSimTracksPtMomentumSum = 0;
+		double matchedSimTracksWPtMomentumSum = 0;
+		double matchedSimTracksPt2MomentumSum = 0;
+		double matchedSimTracksWPt2MomentumSum = 0;
+		for (auto iTrack = v->tracks_begin(); iTrack != v->tracks_end(); ++iTrack) {
+			auto matched = r2s_->find(*iTrack);
+      if(matched != r2s_->end()) {
+        matchedSimTracksPtMomentumSum += matched.pt();
+        matchedSimTracksWPtMomentumSum += weight*matched.pt();
+        matchedSimTracksPt2MomentumSum += pow(matched.pt(),2);
+        matchedSimTracksWPt2MomentumSum += weight*pow(matched.pt(),2);
+      }
+		}
+
     mes_[label][prefix+"Reco"]->Fill(sharedTracks/v.nRecoTrk);
+    mes_[label][ptPrefix+"PtFractionReco"]->Fill(sharedTracks/v.nRecoTrk);
+    mes_[label][ptPrefix+"WPtFractionReco"]->Fill(sharedTracks/v.nRecoTrk);
+    mes_[label][ptPrefix+"Pt2FractionReco"]->Fill(sharedTracks/v.nRecoTrk);
+    mes_[label][ptPrefix+"WPt2FractionReco"]->Fill(sharedTracks/v.nRecoTrk);
     mes_[label][prefix+"RecoMatched"]->Fill(sharedTracks/v.num_matched_sim_tracks);
+    mes_[label][ptPrefix+"PtFractionRecoMatched"]->Fill(sharedTracks/v.num_matched_sim_tracks);
+    mes_[label][ptPrefix+"WPtFractionRecoMatched"]->Fill(sharedTracks/v.num_matched_sim_tracks);
+    mes_[label][ptPrefix+"Pt2FractionRecoMatched"]->Fill(sharedTracks/v.num_matched_sim_tracks);
+    mes_[label][ptPrefix+"WPt2FractionRecoMatched"]->Fill(sharedTracks/v.num_matched_sim_tracks);
     mes_[label][prefix+"Sim"]->Fill(sharedTracks/simV->nGenTrk);
+    mes_[label][ptPrefix+"PtFractionSim"]->Fill(sharedMomentums/simV->nGenTrk);
+    mes_[label][ptPrefix+"WPtFractionSim"]->Fill(sharedTracks/simV->nGenTrk);
+    mes_[label][ptPrefix+"Pt2FractionSim"]->Fill(sharedTracks/simV->nGenTrk);
+    mes_[label][ptPrefix+"WPt2FractionSim"]->Fill(sharedTracks/simV->nGenTrk);
     mes_[label][prefix+"SimMatched"]->Fill(sharedTracks/simV->num_matched_reco_tracks);
+    mes_[label][ptPrefix+"PtFractionSimMatched"]->Fill(sharedTracks/simV->num_matched_reco_tracks);
+    mes_[label][ptPrefix+"WPtFractionSimMatched"]->Fill(sharedTracks/simV->num_matched_reco_tracks);
+    mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(sharedTracks/simV->num_matched_reco_tracks);
+    mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(sharedTracks/simV->num_matched_reco_tracks);
   }
 }
 
