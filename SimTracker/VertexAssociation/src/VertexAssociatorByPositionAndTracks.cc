@@ -60,9 +60,12 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
       if(zdiff < absZ_ && zdiff / recoVertex.zError() < sigmaZ_) {
         auto sharedTracks = calculateVertexSharedTracks(recoVertex, simVertex, *trackRecoToSimAssociation_);
         auto fraction = double(sharedTracks)/recoVertex.tracksSize();
+
+        double momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, momentumSumType_, std::string("Reco"));
         if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
-          LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
-                                        << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks();
+					if(sharedMomentumFraction_ < 0 || momentumFraction > sharedMomentumFraction_) {
+		        LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
+		                                      << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks() << " momentum fraction of shared tracks and tracks of all simulated and reconstructed vertices " << momentumFraction;
 
           ret.insert(reco::VertexBaseRef(vCH, iReco), std::make_pair(TrackingVertexRef(tVCH, iSim), sharedTracks));
         }
@@ -116,9 +119,12 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
       if(zdiff < absZ_ && zdiff / recoVertex.zError() < sigmaZ_) {
         auto sharedTracks = calculateVertexSharedTracks(simVertex, recoVertex, *trackSimToRecoAssociation_);
         auto fraction = double(sharedTracks)/recoVertex.tracksSize();
+
+        double momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, momentumSumType_, std::string("Reco"));
         if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
-          LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
-                                        << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks();
+					if(sharedMomentumFraction_ < 0 || momentumFraction > sharedMomentumFraction_) {
+		        LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
+		                                      << " shared tracks " << sharedTracks << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks() << " momentum fraction of shared tracks and tracks of all simulated and reconstructed vertices " << momentumFraction;
 
           ret.insert(TrackingVertexRef(tVCH, iSim), std::make_pair(reco::VertexBaseRef(vCH, iReco), sharedTracks));
         }

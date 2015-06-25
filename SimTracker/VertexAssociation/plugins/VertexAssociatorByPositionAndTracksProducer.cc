@@ -31,7 +31,6 @@ private:
 
   edm::EDGetTokenT<reco::RecoToSimCollection> trackRecoToSimAssociationToken_;
   edm::EDGetTokenT<reco::SimToRecoCollection> trackSimToRecoAssociationToken_;
-};
 
 VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracksProducer(const edm::ParameterSet& config):
   absZ_(config.getParameter<double>("absZ")),
@@ -39,7 +38,12 @@ VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracks
   maxRecoZ_(config.getParameter<double>("maxRecoZ")),
   sharedTrackFraction_(config.getParameter<double>("sharedTrackFraction")),
   trackRecoToSimAssociationToken_(consumes<reco::RecoToSimCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
+<<<<<<< HEAD
   trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation")))
+=======
+  trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
+	momentumAssociationMode_(config.getParameter<std::string>("momentumAssociationMode"))
+>>>>>>> ac14471... Last developments in CMSSW_7_5_X_2015-06-14-2300
 {
   produces<reco::VertexToTrackingVertexAssociator>();
 }
