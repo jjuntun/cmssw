@@ -1027,6 +1027,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
 		double wHarmPtAvgFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WHarmPtAvg", "RecoMatched");
 		double harmWPtAvgFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmWPtAvg", "RecoMatched");
 
+		double wFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "W", "Sim");
 		double ptFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt", "Sim");
 		double wptFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt", "Sim");
 		double pt2FractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt2", "Sim");
@@ -1064,6 +1065,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
     mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched"]->Fill(harmWPtAvgFractionRecoMatched);
 
     mes_[label][prefix+"Sim"]->Fill(sharedTracks/simV->nGenTrk);
+    mes_[label][ptPrefix+"WFractionSim"]->Fill(wFractionSim);
     mes_[label][ptPrefix+"PtFractionSim"]->Fill(ptFractionSim);
     mes_[label][ptPrefix+"WPtFractionSim"]->Fill(wptFractionSim);
     mes_[label][ptPrefix+"Pt2FractionSim"]->Fill(pt2FractionSim);
