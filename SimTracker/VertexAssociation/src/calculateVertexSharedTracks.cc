@@ -34,11 +34,13 @@ unsigned int calculateVertexSharedTracks(const TrackingVertex& simV, const reco:
 
     // matched track equal to any track of reco vertex => increase counter
     for(const auto& tk: found->val) {
-      if(std::find_if(recoV.tracks_begin(), recoV.tracks_end(), [&](const reco::TrackBaseRef& vtk) {
-            return tk.first == vtk;
-          }) != recoV.tracks_end()) {
-        sharedTracks += 1;
-        break;
+			for(auto iReco = recoV.tracks_begin(); iReco != recoV.tracks_end(); iReco++)	{
+				if( iReco->id() == tk.first.id() )	{
+						if( iReco->key() == tk.first.key() )	{
+			        sharedTracks += 1;
+      			  break;
+						}
+				}
       }
     }
   }

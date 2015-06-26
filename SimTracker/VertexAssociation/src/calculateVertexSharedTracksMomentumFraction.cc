@@ -46,6 +46,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 							return tp.first == vtp;
 						}) != simV.daughterTracks_end()) {
 					sharedMomentumSum += (*iTrack).get()->pt();
+					break;
 				}
 			}									
 		}
@@ -63,7 +64,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 							return tp.first == vtp;
 						}) != simV.daughterTracks_end()) {
 					sharedMomentumSum += (*iTrack).get()->pt()*weight;
-				
+					break;				
 				}
 			}								
 		}
@@ -82,6 +83,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 							return tp.first == vtp;
 						}) != simV.daughterTracks_end()) {
 					sharedMomentumSum += pow((*iTrack).get()->pt(),2);	
+					break;
 				}
 			}								
 		}
@@ -100,7 +102,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 						}) != simV.daughterTracks_end()) {
 					float weight = recoV.trackWeight(*iTrack);
 					sharedMomentumSum += pow((*iTrack).get()->pt(),2)*weight;
-		
+					break;		
 				}
 			}									
 		}
@@ -119,7 +121,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 						}) != simV.daughterTracks_end()) {
 					if( (*iTrack).get()->pt() != 0 )
 						sharedMomentumSum += 1/((*iTrack).get()->pt());
-		
+					break;
 				}
 			}									
 		}
@@ -139,7 +141,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 					float weight = recoV.trackWeight(*iTrack);
 					if( (*iTrack).get()->pt() != 0 )
 						sharedMomentumSum += weight/((*iTrack).get()->pt());
-		
+					break;
 				}
 			}									
 		}
@@ -159,7 +161,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 					float weight = recoV.trackWeight(*iTrack);
 					if( (*iTrack).get()->pt()*weight != 0 )
 						sharedMomentumSum += 1/((*iTrack).get()->pt()*weight);
-		
+					break;
 				}
 			}									
 		}
@@ -181,6 +183,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 					if( (*iTrack).get()->pt()*weight != 0 )
 						sharedMomentumSum += 1/((*iTrack).get()->pt()*weight);
 					elements++;
+					break;
 				}
 			}									
 		}
@@ -204,6 +207,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 					if( (*iTrack).get()->pt()*weight != 0 )
 						sharedMomentumSum += 1/((*iTrack).get()->pt()*weight);
 					elements++;
+					break;
 				}
 			}									
 		}
@@ -227,6 +231,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 					if( (*iTrack).get()->pt()*weight != 0 )
 						sharedMomentumSum += 1/((*iTrack).get()->pt()*weight);
 					elements++;
+					break;
 				}
 			}									
 		}
@@ -247,6 +252,7 @@ double calculateVertexSharedTracksMomentumFraction(const reco::Vertex& recoV, co
 							return tp.first == vtp;
 						}) != simV.daughterTracks_end()) {
 					sharedMomentumSum += pow((*iTrack).get()->pt(),2);
+					break;
 				}
 			}									
 		}
@@ -719,7 +725,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
 							sharedMomentumSum += tp.first.get()->pt();
-							continue;
+							break;
 						}
 					}
 				}
@@ -761,7 +767,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
 							sharedMomentumSum += pow(tp.first.get()->pt(),2);
-							continue;
+							break;
 						}
 						
 					}
@@ -794,7 +800,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
 							sharedMomentumSum += pow(tp.first.get()->pt(),2);
-							continue;
+							break;
 						}
 					}
 				}
@@ -823,7 +829,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
 							sharedMomentumSum += pow(tp.first.get()->pt(),2);
-							continue;
+							break;
 						}
 					}
 				}
