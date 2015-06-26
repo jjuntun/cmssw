@@ -730,17 +730,6 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 					}
 				}
 				
-				
-				/*
-				if(std::find_if(recoV.tracks_begin(), recoV.tracks_end(), [&](const reco::TrackBaseRef& vtp) {
-							return tp.first == vtp;
-						}) != recoV.tracks_end()) {
-					sharedMomentumSum += tp.first.get()->pt();
-				}
-				*/
-				//std::cout << "tempSum " << tempSum << std::endl;
-				std::cout << "sharedMomentumSum " << sharedMomentumSum << std::endl;
-				//std::cout << "tempSum " << tempSum << std::endl;
 			}									
 		}
 	}
@@ -753,16 +742,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 				continue;
 
 			
-			for(const auto& tp: found->val) {
-				
-				/*
-				if(std::find_if(recoV.tracks_begin(), recoV.tracks_end(), [&](const reco::TrackBaseRef& vtp) {
-							return tp.first == vtp;
-						}) != recoV.tracks_end()) {
-					sharedMomentumSum += pow((*(tp.first)).pt(),2);
-				}
-				*/
-				
+			for(const auto& tp: found->val) {		
 				for(auto iReco = recoV.tracks_begin(); iReco != recoV.tracks_end(); iReco++)	{
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
@@ -787,15 +767,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 				continue;
 
 			
-			for(const auto& tp: found->val) {
-				/*
-				if(std::find_if(recoV.tracks_begin(), recoV.tracks_end(), [&](const reco::TrackBaseRef& vtp) {
-							return tp.first == vtp;
-						}) != recoV.tracks_end()) {
-					sharedMomentumSum += pow((*(tp.first)).pt(),2);
-				}
-				*/
-				
+			for(const auto& tp: found->val) {	
 				for(auto iReco = recoV.tracks_begin(); iReco != recoV.tracks_end(); iReco++)	{
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
@@ -816,15 +788,7 @@ double calculateVertexSharedTracksMomentumFraction(const TrackingVertex& simV, c
 				continue;
 
 			
-			for(const auto& tp: found->val) {
-				/*
-				if(std::find_if(recoV.tracks_begin(), recoV.tracks_end(), [&](const reco::TrackBaseRef& vtp) {
-							return tp.first == vtp;
-						}) != recoV.tracks_end()) {
-					sharedMomentumSum += pow((*(tp.first)).pt(),2);
-				}
-				*/
-				
+			for(const auto& tp: found->val) {		
 				for(auto iReco = recoV.tracks_begin(); iReco != recoV.tracks_end(); iReco++)	{
 					if( iReco->id() == tp.first.id() )	{
 						if( iReco->key() == tp.first.key() )	{
