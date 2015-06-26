@@ -763,11 +763,13 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
 
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim", 50, 0, 1);		
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim", 50, 0, 1);
+    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim", 50, 0, 1);
