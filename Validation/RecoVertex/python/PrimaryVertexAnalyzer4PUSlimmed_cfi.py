@@ -32,9 +32,44 @@ vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
                                 ),
 )
 
+
+from SimTracker.VertexAssociation import VertexAssociatorByPositionAndTracks
+
+associatorByTrackgt01 = VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.1)
+vertexAnalysisByTrackgt01 = vertexAnalysis.clone(
+	vertexAssociator = "associatorByTrackgt01",
+  root_folder = "Vertexing/PrimaryVertexVByTrackgt01"
+)
+
+associatorByPt2gt01 = VertexAssociatorByPositionAndTracks.clone(sharedMomentumFraction=0.1)
+vertexAnalysisByPt2gt01 = vertexAnalysis.clone(
+	vertexAssociator = "associatorByPt2gt01",
+  root_folder = "Vertexing/PrimaryVertexVByPt2gt01"
+)
+
+associatorByHarmPt2gt01 = VertexAssociatorByPositionAndTracks.clone(sharedMomentumFraction=0.1, momentumAssociationMode="HarmPt2")
+vertexAnalysisByHarmPt2gt01 = vertexAnalysis.clone(
+	vertexAssociator = "associatorByHarmPt2gt01",
+  root_folder = "Vertexing/PrimaryVertexVByHarmPt2gt01"
+)
+
+associatorByHarmPt2Avggt01 = VertexAssociatorByPositionAndTracks.clone(sharedMomentumFraction=0.1, momentumAssociationMode="HarmPt2Avg")
+vertexAnalysisByHarmPt2gt01 = vertexAnalysis.clone(
+	vertexAssociator = "associatorByHarmPt2Avggt01",
+  root_folder = "Vertexing/PrimaryVertexVByHarmPt2Avggt01"
+)
+
 vertexAnalysisSequence = cms.Sequence(cms.ignore(selectedOfflinePrimaryVertices)
                                       * cms.ignore(selectedOfflinePrimaryVerticesWithBS)
 #                                      * cms.ignore(selectedPixelVertices)
                                       * vertexAnalysis
+	* associatorByTrackgt01
+  * vertexAnalysisByTrackgt01
+	* associatorByPt2gt01
+  * vertexAnalysisByPt2gt01
+	* associatorByHarmPt2gt01
+  * vertexAnalysisByHarmPt2gt01
+	* associatorByHarmPt2Avggt01
+  * vertexAnalysisByHarmPt2Avggt01
 )
 
