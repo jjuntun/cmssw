@@ -64,10 +64,11 @@ void VertexAssociatorByPositionAndTracksProducer::fillDescriptions(edm::Configur
   desc.add<double>("maxRecoZ", 1000.0);
   desc.add<double>("sharedTrackFraction", -1.0);
 	desc.add<double>("sharedMomentumFraction", -1.0);
-	desc.add<std::string>("momentumAssociationMode", "Pt2");
 
   // Track-TrackingParticle association
   desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
+
+	desc.add<std::string>("momentumAssociationMode", "Pt2");
 
   descriptions.add("VertexAssociatorByPositionAndTracks", desc);
 }
