@@ -15,7 +15,7 @@ VertexAssociatorByPositionAndTracks::VertexAssociatorByPositionAndTracks(const e
 																																				 
                                                                          const reco::RecoToSimCollection *trackRecoToSimAssociation,
                                                                          const reco::SimToRecoCollection *trackSimToRecoAssociation,
-std::string momentumSumType):
+																																				 const int momentumSumType):
   productGetter_(productGetter),
   absZ_(absZ),
   sigmaZ_(sigmaZ),
@@ -69,7 +69,39 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
         auto sharedTracks = calculateVertexSharedTracks(recoVertex, simVertex, *trackRecoToSimAssociation_);
         auto fraction = double(sharedTracks)/recoVertex.tracksSize();
 
-        double momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, momentumSumType_, std::string("Reco"));
+        //double momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, momentumSumType_, std::string("Reco"));
+
+				double momentumFraction = 0;
+
+				if(momentumSumType_ == 0)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "", std::string("Reco"));
+				else if(momentumSumType_ == 1)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "W", std::string("Reco"));
+				else if(momentumSumType_ == 2)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "Pt", std::string("Reco"));
+				else if(momentumSumType_ == 3)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WPt", std::string("Reco"));
+				else if(momentumSumType_ == 4)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "Pt2", std::string("Reco"));
+				else if(momentumSumType_ == 5)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WPt2", std::string("Reco"));
+				else if(momentumSumType_ == 6)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmPt", std::string("Reco"));
+				else if(momentumSumType_ == 7)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WHarmPt", std::string("Reco"));
+				else if(momentumSumType_ == 8)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmWPt", std::string("Reco"));
+				else if(momentumSumType_ == 9)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmPtAvg", std::string("Reco"));
+				else if(momentumSumType_ == 10)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WHarmPtAvg", std::string("Reco"));
+				else if(momentumSumType_ == 11)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmWPtAvg", std::string("Reco"));
+				else
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "", std::string("Reco"));
+
+
+
         if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
 					if(sharedMomentumFraction_ < 0 || momentumFraction > sharedMomentumFraction_) {
 		        LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
@@ -129,7 +161,36 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
         auto sharedTracks = calculateVertexSharedTracks(simVertex, recoVertex, *trackSimToRecoAssociation_);
         auto fraction = double(sharedTracks)/recoVertex.tracksSize();
 
-        double momentumFraction = calculateVertexSharedTracksMomentumFraction(recoVertex, simVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, momentumSumType_, std::string("Reco"));
+				double momentumFraction = 0;
+
+				if(momentumSumType_ == 0)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "", std::string("Reco"));
+				else if(momentumSumType_ == 1)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "W", std::string("Reco"));
+				else if(momentumSumType_ == 2)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "Pt", std::string("Reco"));
+				else if(momentumSumType_ == 3)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WPt", std::string("Reco"));
+				else if(momentumSumType_ == 4)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "Pt2", std::string("Reco"));
+				else if(momentumSumType_ == 5)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WPt2", std::string("Reco"));
+				else if(momentumSumType_ == 6)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmPt", std::string("Reco"));
+				else if(momentumSumType_ == 7)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WHarmPt", std::string("Reco"));
+				else if(momentumSumType_ == 8)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmWPt", std::string("Reco"));
+				else if(momentumSumType_ == 9)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmPtAvg", std::string("Reco"));
+				else if(momentumSumType_ == 10)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "WHarmPtAvg", std::string("Reco"));
+				else if(momentumSumType_ == 11)
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "HarmWPtAvg", std::string("Reco"));
+				else
+        	momentumFraction = calculateVertexSharedTracksMomentumFraction(simVertex, recoVertex, *trackSimToRecoAssociation_, *trackRecoToSimAssociation_, "", std::string("Reco"));
+
+
         if(sharedTrackFraction_ < 0 || fraction > sharedTrackFraction_) {
 					if(sharedMomentumFraction_ < 0 || momentumFraction > sharedMomentumFraction_) {
 		        LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
