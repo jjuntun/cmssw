@@ -46,7 +46,7 @@ vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
                                 abs_z_match = cms.untracked.double(0.1),
 																sharedTrackFraction = cms.untracked.double(-1.0),
 																sharedMomentumFraction = cms.untracked.double(-1.0),
-																momentumAssociationMode = cms.untracked.vstring("Pt2"),
+																momentumAssociationMode = cms.untracked.int32(5),
                                 root_folder = cms.untracked.string("Vertexing/PrimaryVertexV"),
                                 recoTrackProducer = cms.untracked.InputTag("generalTracks"),
                                 trackingParticleCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
@@ -77,13 +77,13 @@ vertexAnalysisByTrackgt01 = cms.EDAnalyzer(
   abs_z_match = cms.untracked.double(0.1),
 	sharedTrackFraction = cms.untracked.double(-1.0),
 	sharedMomentumFraction = cms.untracked.double(-1.0),
-	momentumAssociationMode = cms.untracked.vstring("Pt2"),
+	momentumAssociationMode = cms.untracked.int32(5),
   root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByTrackgt01"),
 	recoTrackProducer = cms.untracked.InputTag("generalTracks"),
   trackingParticleCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackingVertexCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackAssociatorMap = cms.untracked.InputTag("trackingParticleRecoTrackAsssociation"),
-	vertexAssociator = cms.untracked.InputTag("associatorByTrackgt01"),
+	vertexAssociator = cms.untracked.InputTag("VertexAssociatorByPositionAndTracks"),
 	vertexRecoCollections = cms.VInputTag("offlinePrimaryVertices1",
 																				"offlinePrimaryVerticesWithBS1",
 																				"selectedOfflinePrimaryVertices1",
@@ -103,13 +103,13 @@ vertexAnalysisByPt2gt01 = cms.EDAnalyzer(
   abs_z_match = cms.untracked.double(0.1),
 	sharedTrackFraction = cms.untracked.double(-1.0),
 	sharedMomentumFraction = cms.untracked.double(-1.0),
-	momentumAssociationMode = cms.untracked.vstring("Pt2"),
+	momentumAssociationMode = cms.untracked.int32(5),
  	root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByPt2gt01"),
 	recoTrackProducer = cms.untracked.InputTag("generalTracks"),
   trackingParticleCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackingVertexCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackAssociatorMap = cms.untracked.InputTag("trackingParticleRecoTrackAsssociation"),
-	vertexAssociator = cms.untracked.InputTag("associatorByTrackgt01"),
+	vertexAssociator = cms.untracked.InputTag("VertexAssociatorByPositionAndTracks"),
 	vertexRecoCollections = cms.VInputTag("offlinePrimaryVertices2",
 																				"offlinePrimaryVerticesWithBS2",
 																				"selectedOfflinePrimaryVertices2",
@@ -130,13 +130,13 @@ vertexAnalysisByHarmPt2gt01 = cms.EDAnalyzer(
   abs_z_match = cms.untracked.double(0.1),
 	sharedTrackFraction = cms.untracked.double(-1.0),
 	sharedMomentumFraction = cms.untracked.double(-1.0),
-	momentumAssociationMode = cms.untracked.vstring("Pt2"),
+	momentumAssociationMode = cms.untracked.int32(5),
   root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByHarmPt2gt01"),
 	recoTrackProducer = cms.untracked.InputTag("generalTracks"),
   trackingParticleCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackingVertexCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackAssociatorMap = cms.untracked.InputTag("trackingParticleRecoTrackAsssociation"),
-	vertexAssociator = cms.untracked.InputTag("associatorByTrackgt01"),
+	vertexAssociator = cms.untracked.InputTag("VertexAssociatorByPositionAndTracks"),
 	vertexRecoCollections = cms.VInputTag("offlinePrimaryVertices3",
 																				"offlinePrimaryVerticesWithBS3",
 																				"selectedOfflinePrimaryVertices3",
@@ -157,13 +157,13 @@ vertexAnalysisByHarmPt2Avggt01 = cms.EDAnalyzer(
   abs_z_match = cms.untracked.double(0.1),
 	sharedTrackFraction = cms.untracked.double(-1.0),
 	sharedMomentumFraction = cms.untracked.double(-1.0),
-	momentumAssociationMode = cms.untracked.vstring("Pt2"),
+	momentumAssociationMode = cms.untracked.int32(5),
   root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByHarmPt2Avggt01"),
 	recoTrackProducer = cms.untracked.InputTag("generalTracks"),
   trackingParticleCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackingVertexCollection = cms.untracked.InputTag("mix", "MergedTrackTruth"),
   trackAssociatorMap = cms.untracked.InputTag("trackingParticleRecoTrackAsssociation"),
-	vertexAssociator = cms.untracked.InputTag("associatorByTrackgt01"),
+	vertexAssociator = cms.untracked.InputTag("VertexAssociatorByPositionAndTracks"),
 	vertexRecoCollections = cms.VInputTag("offlinePrimaryVertices4",
 																				"offlinePrimaryVerticesWithBS4",
 																				"selectedOfflinePrimaryVertices4",
@@ -176,12 +176,12 @@ vertexAnalysisSequence = cms.Sequence(cms.ignore(selectedOfflinePrimaryVertices)
 #                                      * cms.ignore(selectedPixelVertices)
                                       * vertexAnalysis
 #	* associatorByTrackgt01
-  * vertexAnalysisByTrackgt01
+#  * vertexAnalysisByTrackgt01
 #	* associatorByPt2gt01
-  * vertexAnalysisByPt2gt01
+#  * vertexAnalysisByPt2gt01
 #	* associatorByHarmPt2gt01
-  * vertexAnalysisByHarmPt2gt01
+#  * vertexAnalysisByHarmPt2gt01
 #	* associatorByHarmPt2Avggt01
-  * vertexAnalysisByHarmPt2Avggt01
+#  * vertexAnalysisByHarmPt2Avggt01
 )
 
