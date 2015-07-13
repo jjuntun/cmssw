@@ -36,6 +36,8 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
   const edm::View<reco::Vertex>& recoVertices = *vCH;
   const TrackingVertexCollection& simVertices = *tVCH;
 
+	std::cout << "1. sharedTrackFraction_ " << sharedTrackFraction_ << " sharedMomentumFraction_ " << sharedMomentumFraction_ << std::endl;
+
   LogDebug("VertexAssociation") << "VertexAssociatorByPositionAndTracks::associateRecoToSim(): associating "
                                 << recoVertices.size() << " reco::Vertices to" << simVertices.size() << " TrackingVertices";
 
@@ -130,6 +132,8 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
 
   LogDebug("VertexAssociation") << "VertexAssociatorByPositionAndTracks::associateSimToReco(): associating "
                                 << simVertices.size() << " TrackingVertices to " << recoVertices.size() << " reco::Vertices";
+
+	std::cout << "2. sharedTrackFraction_ " << sharedTrackFraction_ << " sharedMomentumFraction_ " << sharedMomentumFraction_ << std::endl;
 
   int current_event = -1;
   for(size_t iSim=0; iSim != simVertices.size(); ++iSim) {
