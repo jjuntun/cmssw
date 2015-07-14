@@ -59,18 +59,19 @@ void VertexAssociatorByPositionAndTracksProducer::fillDescriptions(edm::Configur
   edm::ParameterSetDescription desc;
   
   // Matching conditions
-  //desc.add<double>("absZ", 0.1);
-  //desc.add<double>("sigmaZ", 3.0);
-  //desc.add<double>("maxRecoZ", 1000.0);
-  //desc.add<double>("sharedTrackFraction", -1.0);
-	//desc.add<double>("sharedMomentumFraction", -1.0);
+  desc.add<double>("absZ", 0.1);
+  desc.add<double>("sigmaZ", 3.0);
+  desc.add<double>("maxRecoZ", 1000.0);
+  desc.add<double>("sharedTrackFraction", -1.0);
+	desc.add<double>("sharedMomentumFraction", -1.0);
 
   // Track-TrackingParticle association
-  //desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
+  desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
 
-	//desc.add<int>("momentumAssociationMode", 5);
+	desc.add<int>("momentumAssociationMode", 5);
 
-  //descriptions.add("VertexAssociatorByPositionAndTracks", desc);
+  descriptions.add("VertexAssociatorByPositionAndTracks", desc);
+
 }
 
 void VertexAssociatorByPositionAndTracksProducer::produce(edm::StreamID, edm::Event& iEvent, const edm::EventSetup&) const {

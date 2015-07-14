@@ -42,13 +42,15 @@ vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
                                 ),
 )
 
-#from SimTracker.VertexAssociation import VertexAssociatorByPositionAndTracks_cfi
+from SimTracker.VertexAssociation import VertexAssociatorByPositionAndTracks_cfi
 
 #print dir(VertexAssociatorByPositionAndTracks_cfi)
 #print dir(VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks)
 
-#associatorByTrackgt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.0)
+associatorByTrackgt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.1)
+vertexAnalysisByTrackgt01 = vertexAnalysis.clone(vertexAssociator="associatorByTrackgt01", root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByTrackgt01"))
 
+"""
 vertexAnalysisByTrackgt01 = cms.EDAnalyzer(
 	"PrimaryVertexAnalyzer4PUSlimmed",
   use_only_charged_tracks = cms.untracked.bool(True),
@@ -70,8 +72,13 @@ vertexAnalysisByTrackgt01 = cms.EDAnalyzer(
                                         "selectedOfflinePrimaryVerticesWithBS1",
 																				)
 )
+"""
 
 #associatorByPt2gt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedMomentumFraction=0.0)
+associatorByPt2gt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.15, sharedMomentumFraction=0.2)
+vertexAnalysisByPt2gt01 = vertexAnalysis.clone(vertexAssociator="associatorByPt2gt01", root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByPt2gt01"))
+
+"""
 vertexAnalysisByPt2gt01 = cms.EDAnalyzer(
 	#sharedMomentumFraction = -1.0,
 	#vertexAssociator = cms.untracked.InputTag("associatorByPt2gt01"),
@@ -96,8 +103,13 @@ vertexAnalysisByPt2gt01 = cms.EDAnalyzer(
                                         "selectedOfflinePrimaryVerticesWithBS2",
 																				)
 )
+"""
 
 #associatorByHarmPt2gt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedMomentumFraction=0.0, momentumAssociationMode="HarmPt2")
+associatorByHarmPt2gt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.1,momentumAssociationMode = 5)
+vertexAnalysisByHarmPt2gt01 = vertexAnalysis.clone(vertexAssociator="associatorByHarmPt2gt01", root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByHarmPt2gt01"))
+
+"""
 vertexAnalysisByHarmPt2gt01 = cms.EDAnalyzer(
 	#sharedMomentumFraction=-1.0,
 	#momentumAssociationMode="HarmPt2",
@@ -123,8 +135,13 @@ vertexAnalysisByHarmPt2gt01 = cms.EDAnalyzer(
                                         "selectedOfflinePrimaryVerticesWithBS3",
 																				)
 )
+"""
 
 #associatorByHarmPt2Avggt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedMomentumFraction=0.0, momentumAssociationMode="HarmPt2Avg")
+associatorByHarmPt2Avggt01 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=-1, momentumAssociationMode=6)
+vertexAnalysisByHarmPt2Avggt01 = vertexAnalysis.clone(vertexAssociator="associatorByHarmPt2Avggt01", root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByHarmPt2Avggt01"))
+
+"""
 vertexAnalysisByHarmPt2Avggt01 = cms.EDAnalyzer(
 	#sharedMomentumFraction=-1.0, 
 	#momentumAssociationMode="HarmPt2Avg",
@@ -150,18 +167,19 @@ vertexAnalysisByHarmPt2Avggt01 = cms.EDAnalyzer(
                                         "selectedOfflinePrimaryVerticesWithBS4",
 																				)
 )
+"""
 
 vertexAnalysisSequence = cms.Sequence(cms.ignore(selectedOfflinePrimaryVertices)
                                       * cms.ignore(selectedOfflinePrimaryVerticesWithBS)
 #                                      * cms.ignore(selectedPixelVertices)
                                       * vertexAnalysis
-#	* associatorByTrackgt01
+	* associatorByTrackgt01
   * vertexAnalysisByTrackgt01
-#	* associatorByPt2gt01
+	* associatorByPt2gt01
   * vertexAnalysisByPt2gt01
-#	* associatorByHarmPt2gt01
+	* associatorByHarmPt2gt01
   * vertexAnalysisByHarmPt2gt01
-#	* associatorByHarmPt2Avggt01
+	* associatorByHarmPt2Avggt01
   * vertexAnalysisByHarmPt2Avggt01
 )
 

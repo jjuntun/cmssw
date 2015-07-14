@@ -62,4 +62,17 @@ postProcessorVertex = cms.EDAnalyzer("DQMGenericClient",
                                      verbose = cms.untracked.uint32(5)
 )
 
-postProcessorVertexStandAlone = cms.Sequence(postProcessorVertex)
+postProcessorVertexByTrackgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByTrackgt01/*"))
+
+postProcessorVertexByPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt01/*"))
+
+postProcessorVertexByHarmPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt01/*"))
+
+postProcessorVertexByHarmPt2Avggt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt01/*"))
+
+postProcessorVertexStandAlone = cms.Sequence(postProcessorVertex
+* postProcessorVertexByTrackgt01
+* postProcessorVertexByPt2gt01
+* postProcessorVertexByHarmPt2gt01
+* postProcessorVertexByHarmPt2Avggt01
+)

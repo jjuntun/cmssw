@@ -479,12 +479,15 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
     mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched"] =
         i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched",
                  "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched",
-                 50, 0, 1);		
+                 50, 0, 1);	
+
 
     // All Reco Vertices. Used for {Fake,Duplicate}-Rate plots
     mes_[label]["RecoAllAssoc2Gen_NumVertices"] =
         i.book1D("RecoAllAssoc2Gen_NumVertices",
                  "ReconstructedAllAssoc2Gen_NumVertices", 100, 0., 200.);
+
+
     mes_[label]["RecoAllAssoc2Gen_X"] = i.book1D(
         "RecoAllAssoc2Gen_X", "ReconstructedAllAssoc2Gen_X", 120, -0.6, 0.6);
     mes_[label]["RecoAllAssoc2Gen_Y"] = i.book1D(
@@ -784,6 +787,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched", 50, 0, 1);
+
   }
 }
 
@@ -907,6 +911,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
     //mes_[label][ptPrefix+"WPtFractionSimMatched"]->Fill(wptFractionSimMatched);
     mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
     //mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(wpt2FractionSimMatched);
+
   }
 
 }
@@ -1077,6 +1082,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
     mes_[label][ptPrefix+"WPtFractionSimMatched"]->Fill(wptFractionSimMatched);
     mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
     mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(wpt2FractionSimMatched);
+
   }
 }
 
