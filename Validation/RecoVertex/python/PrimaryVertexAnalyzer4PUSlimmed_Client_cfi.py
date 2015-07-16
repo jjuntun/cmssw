@@ -63,16 +63,39 @@ postProcessorVertex = cms.EDAnalyzer("DQMGenericClient",
 )
 
 postProcessorVertexByTrackgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByTrackgt01/*"))
+postProcessorVertexByTrackgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByTrackgt03/*"))
+postProcessorVertexByTrackgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByTrackgt05/*"))
+
+postProcessorVertexByPtgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPtgt01/*"))
+postProcessorVertexByPtgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPtgt03/*"))
+postProcessorVertexByPtgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPtgt05/*"))
 
 postProcessorVertexByPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt01/*"))
+postProcessorVertexByPt2gt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt03/*"))
+postProcessorVertexByPt2gt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt05/*"))
 
 postProcessorVertexByHarmPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt01/*"))
+postProcessorVertexByHarmPt2gt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt03/*"))
+postProcessorVertexByHarmPt2gt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt05/*"))
 
 postProcessorVertexByHarmPt2Avggt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt01/*"))
+postProcessorVertexByHarmPt2Avggt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt03/*"))
+postProcessorVertexByHarmPt2Avggt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt05/*"))
 
 postProcessorVertexStandAlone = cms.Sequence(postProcessorVertex
 * postProcessorVertexByTrackgt01
+* postProcessorVertexByTrackgt03
+* postProcessorVertexByTrackgt05
+* postProcessorVertexByPtgt01
+* postProcessorVertexByPtgt03
+* postProcessorVertexByPtgt05
 * postProcessorVertexByPt2gt01
+* postProcessorVertexByPt2gt03
+* postProcessorVertexByPt2gt05
 * postProcessorVertexByHarmPt2gt01
+* postProcessorVertexByHarmPt2gt03
+* postProcessorVertexByHarmPt2gt05
 * postProcessorVertexByHarmPt2Avggt01
+* postProcessorVertexByHarmPt2Avggt03
+* postProcessorVertexByHarmPt2Avggt05
 )

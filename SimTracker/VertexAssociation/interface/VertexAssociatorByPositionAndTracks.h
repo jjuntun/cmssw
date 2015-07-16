@@ -22,10 +22,9 @@ public:
                                       double sigmaZ,
                                       double maxRecoZ,
                                       double sharedTrackFraction,
-																			double sharedMomentumFraction,
                                       const reco::RecoToSimCollection *trackRecoToSimAssociation,
                                       const reco::SimToRecoCollection *trackSimToRecoAssociation,
-																			const int momentumSumType);
+																			const std::string associationMode);
 
   virtual ~VertexAssociatorByPositionAndTracks();
 
@@ -44,12 +43,11 @@ private:
   const double sigmaZ_;
   const double maxRecoZ_;
   const double sharedTrackFraction_;
-	const double sharedMomentumFraction_;
 
   const reco::RecoToSimCollection *trackRecoToSimAssociation_;
   const reco::SimToRecoCollection *trackSimToRecoAssociation_;
 
-	const int momentumSumType_;
+	const std::string associationMode_;
 
 };
 
