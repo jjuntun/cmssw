@@ -21,7 +21,8 @@ public:
                                       double maxRecoZ,
                                       double sharedTrackFraction,
                                       const reco::RecoToSimCollection *trackRecoToSimAssociation,
-                                      const reco::SimToRecoCollection *trackSimToRecoAssociation);
+                                      const reco::SimToRecoCollection *trackSimToRecoAssociation,
+																			const std::string associationMode);
 
   virtual ~VertexAssociatorByPositionAndTracks();
 
@@ -43,6 +44,9 @@ private:
 
   const reco::RecoToSimCollection *trackRecoToSimAssociation_;
   const reco::SimToRecoCollection *trackSimToRecoAssociation_;
+
+	const std::string associationMode_;
+
 };
 
 #endif
