@@ -66,36 +66,85 @@ postProcessorVertexByTrackgt01 = postProcessorVertex.clone(subDirs = cms.untrack
 postProcessorVertexByTrackgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByTrackgt03/*"))
 postProcessorVertexByTrackgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByTrackgt05/*"))
 
+postProcessorVertexByWTrackgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWTrackgt01/*"))
+postProcessorVertexByWTrackgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWTrackgt03/*"))
+postProcessorVertexByWTrackgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWTrackgt05/*"))
+
 postProcessorVertexByPtgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPtgt01/*"))
 postProcessorVertexByPtgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPtgt03/*"))
 postProcessorVertexByPtgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPtgt05/*"))
+
+postProcessorVertexByWPtgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWPtgt01/*"))
+postProcessorVertexByWPtgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWPtgt03/*"))
+postProcessorVertexByWPtgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWPtgt05/*"))
 
 postProcessorVertexByPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt01/*"))
 postProcessorVertexByPt2gt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt03/*"))
 postProcessorVertexByPt2gt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByPt2gt05/*"))
 
-postProcessorVertexByHarmPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt01/*"))
-postProcessorVertexByHarmPt2gt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt03/*"))
-postProcessorVertexByHarmPt2gt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2gt05/*"))
+postProcessorVertexByWPt2gt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWPt2gt01/*"))
+postProcessorVertexByWPt2gt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWPt2gt03/*"))
+postProcessorVertexByWPt2gt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWPt2gt05/*"))
 
-postProcessorVertexByHarmPt2Avggt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt01/*"))
-postProcessorVertexByHarmPt2Avggt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt03/*"))
-postProcessorVertexByHarmPt2Avggt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPt2Avggt05/*"))
+postProcessorVertexByHarmPtgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPtgt01/*"))
+postProcessorVertexByHarmPtgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPtgt03/*"))
+postProcessorVertexByHarmPtgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPtgt05/*"))
+
+postProcessorVertexByWHarmPtgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWHarmPtgt01/*"))
+postProcessorVertexByWHarmPtgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWHarmPtgt03/*"))
+postProcessorVertexByWHarmPtgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWHarmPtgt05/*"))
+
+postProcessorVertexByHarmWPtgt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmWPtgt01/*"))
+postProcessorVertexByHarmWPtgt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmWPtgt03/*"))
+postProcessorVertexByHarmWPtgt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmWPtgt05/*"))
+
+postProcessorVertexByHarmPtAvggt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPtAvggt01/*"))
+postProcessorVertexByHarmPtAvggt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPtAvggt03/*"))
+postProcessorVertexByHarmPtAvggt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmPtAvggt05/*"))
+
+postProcessorVertexByWHarmPtAvggt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWHarmPtAvggt01/*"))
+postProcessorVertexByWHarmPtAvggt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWHarmPtAvggt03/*"))
+postProcessorVertexByWHarmPtAvggt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByWHarmPtAvggt05/*"))
+
+postProcessorVertexByHarmWPtAvggt01 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmWPtAvggt01/*"))
+postProcessorVertexByHarmWPtAvggt03 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmWPtAvggt03/*"))
+postProcessorVertexByHarmWPtAvggt05 = postProcessorVertex.clone(subDirs = cms.untracked.vstring("Vertexing/PrimaryVertexVByHarmWPtAvggt05/*"))
 
 postProcessorVertexStandAlone = cms.Sequence(postProcessorVertex
 * postProcessorVertexByTrackgt01
 * postProcessorVertexByTrackgt03
 * postProcessorVertexByTrackgt05
+* postProcessorVertexByWTrackgt01
+* postProcessorVertexByWTrackgt03
+* postProcessorVertexByWTrackgt05
 * postProcessorVertexByPtgt01
 * postProcessorVertexByPtgt03
 * postProcessorVertexByPtgt05
+* postProcessorVertexByWPtgt01
+* postProcessorVertexByWPtgt03
+* postProcessorVertexByWPtgt05
 * postProcessorVertexByPt2gt01
 * postProcessorVertexByPt2gt03
 * postProcessorVertexByPt2gt05
-* postProcessorVertexByHarmPt2gt01
-* postProcessorVertexByHarmPt2gt03
-* postProcessorVertexByHarmPt2gt05
-* postProcessorVertexByHarmPt2Avggt01
-* postProcessorVertexByHarmPt2Avggt03
-* postProcessorVertexByHarmPt2Avggt05
+* postProcessorVertexByWPt2gt01
+* postProcessorVertexByWPt2gt03
+* postProcessorVertexByWPt2gt05
+* postProcessorVertexByHarmPtgt01
+* postProcessorVertexByHarmPtgt03
+* postProcessorVertexByHarmPtgt05
+* postProcessorVertexByWHarmPtgt01
+* postProcessorVertexByWHarmPtgt03
+* postProcessorVertexByWHarmPtgt05
+* postProcessorVertexByHarmWPtgt01
+* postProcessorVertexByHarmWPtgt03
+* postProcessorVertexByHarmWPtgt05
+* postProcessorVertexByHarmPtAvggt01
+* postProcessorVertexByHarmPtAvggt03
+* postProcessorVertexByHarmPtAvggt05
+* postProcessorVertexByWHarmPtAvggt01
+* postProcessorVertexByWHarmPtAvggt03
+* postProcessorVertexByWHarmPtAvggt05
+* postProcessorVertexByHarmWPtAvggt01
+* postProcessorVertexByHarmWPtAvggt03
+* postProcessorVertexByHarmWPtAvggt05
 )
