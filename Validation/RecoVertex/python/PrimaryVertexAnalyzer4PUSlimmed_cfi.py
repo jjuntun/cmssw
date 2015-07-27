@@ -24,7 +24,7 @@ vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
                                 verbose = cms.untracked.bool(False),
                                 sigma_z_match = cms.untracked.double(3.0),
                                 abs_z_match = cms.untracked.double(0.1),
-																sharedTrackFraction = cms.untracked.double(0.001),
+																sharedTrackFraction = cms.untracked.double(-1),
 																associationMode = cms.string(""),
                                 root_folder = cms.untracked.string("Vertexing/PrimaryVertexV"),
                                 recoTrackProducer = cms.untracked.InputTag("generalTracks"),
@@ -43,6 +43,8 @@ vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
 
 from SimTracker.VertexAssociation import VertexAssociatorByPositionAndTracks_cfi
 
+associatorByTrackgt0001 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.001,associationMode = cms.string(""))
+vertexAnalysisByTrackgt0001 = vertexAnalysis.clone(vertexAssociator="associatorByTrackgt0001", root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByTrackgt0001"))
 
 associatorByTrackgt001 = VertexAssociatorByPositionAndTracks_cfi.VertexAssociatorByPositionAndTracks.clone(sharedTrackFraction=0.01,associationMode = cms.string(""))
 vertexAnalysisByTrackgt001 = vertexAnalysis.clone(vertexAssociator="associatorByTrackgt001", root_folder = cms.untracked.string("Vertexing/PrimaryVertexVByTrackgt001"))
@@ -326,6 +328,8 @@ vertexAnalysisSequence = cms.Sequence(cms.ignore(selectedOfflinePrimaryVertices)
                                       * cms.ignore(selectedOfflinePrimaryVerticesWithBS)
 #                                      * cms.ignore(selectedPixelVertices)
                                       * vertexAnalysis
+	* associatorByTrackgt0001
+  * vertexAnalysisByTrackgt0001
 	* associatorByTrackgt001
   * vertexAnalysisByTrackgt001
 	* associatorByTrackgt005
