@@ -1006,9 +1006,47 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
 		ptPrefix = "RecoAllAssoc2GenMultiMatched_SharedTrack";
   }
 
-	// calculate first the fractions (at most 3 for each recoVertex, because a recoVertex is connected
-	// to at most three simVertices), then Fill three histograms with the fraction values by order of
-	// magnitude
+	//recoVertex-simVertex fraction values
+
+  std::vector<double> recoFractionValues;
+  std::vector<double> wFractionRecoFractionValues;
+  std::vector<double> ptFractionRecoFractionValues;
+  std::vector<double> wPtFractionRecoFractionValues;
+  std::vector<double> pt2FractionRecoFractionValues;
+  std::vector<double> wPt2FractionRecoFractionValues;
+  std::vector<double> harmPtFractionRecoFractionValues;
+  std::vector<double> wHarmPtFractionRecoFractionValues;
+  std::vector<double> harmWPtFractionRecoFractionValues;
+  std::vector<double> harmPtAvgFractionRecoFractionValues;
+  std::vector<double> wHarmPtAvgFractionRecoFractionValues;
+  std::vector<double> harmWPtAvgFractionRecoFractionValues;
+
+  std::vector<double> recoMatchedFractionValues;
+  std::vector<double> wFractionRecoMatchedFractionValues;
+  std::vector<double> ptFractionRecoMatchedFractionValues;
+  std::vector<double> wPtFractionRecoMatchedFractionValues;
+  std::vector<double> pt2FractionRecoMatchedFractionValues;
+  std::vector<double> wPt2FractionRecoMatchedFractionValues;
+  std::vector<double> harmPtFractionRecoMatchedFractionValues;
+  std::vector<double> wHarmPtFractionRecoMatchedFractionValues;
+  std::vector<double> harmWPtFractionRecoMatchedFractionValues;
+  std::vector<double> harmPtAvgFractionRecoMatchedFractionValues;
+  std::vector<double> wHarmPtAvgFractionRecoMatchedFractionValues;
+  std::vector<double> harmWPtAvgFractionRecoMatchedFractionValues;
+
+  std::vector<double> simFractionValues;
+  std::vector<double> wFractionSimFractionValues;
+  std::vector<double> ptFractionSimFractionValues;
+  std::vector<double> wPtFractionSimFractionValues;
+  std::vector<double> pt2FractionSimFractionValues;
+  std::vector<double> wPt2FractionSimFractionValues;
+  std::vector<double> simMatchedFractionValues;
+  std::vector<double> ptFractionSimMatchedFractionValues;
+  std::vector<double> wPtFractionSimMatchedFractionValues;
+  std::vector<double> pt2FractionSimMatchedFractionValues;
+  std::vector<double> wPt2FractionSimMatchedFractionValues;
+
+
   for(size_t i=0; i<v.sim_vertices.size(); ++i) {
     const double sharedTracks = v.sim_vertices_num_shared_tracks[i];
     const simPrimaryVertex *simV = v.sim_vertices_internal[i];
@@ -1086,7 +1124,167 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
     mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
     mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(wpt2FractionSimMatched);
 
+
+		recoFractionValues.push_back(sharedTracks/v.nRecoTrk);
+		wFractionRecoFractionValues.push_back(wFractionReco);
+		ptFractionRecoFractionValues.push_back(ptFractionReco);
+		wPtFractionRecoFractionValues.push_back(wPtFractionReco);
+		pt2FractionRecoFractionValues.push_back(pt2FractionReco);
+		wPt2FractionRecoFractionValues.push_back(wPt2FractionReco);
+		harmPtFractionRecoFractionValues.push_back(harmPtFractionReco);
+		wHarmPtFractionRecoFractionValues.push_back(wHarmPtFractionReco);
+		harmWPtFractionRecoFractionValues.push_back(harmWPtFractionReco);
+		harmPtAvgFractionRecoFractionValues.push_back(harmPtAvgFractionReco);
+		wHarmPtAvgFractionRecoFractionValues.push_back(wHarmPtAvgFractionReco);
+		harmWPtAvgFractionRecoFractionValues.push_back(harmWPtAvgFractionReco);
+
+		recoMatchedFractionValues.push_back(sharedTracks/v.num_matched_sim_tracks);
+		wFractionRecoMatchedFractionValues.push_back(wFractionRecoMatched);
+		ptFractionRecoMatchedFractionValues.push_back(ptFractionRecoMatched);
+		wPtFractionRecoMatchedFractionValues.push_back(wPtFractionRecoMatched);
+		pt2FractionRecoMatchedFractionValues.push_back(pt2FractionRecoMatched);
+		wPt2FractionRecoMatchedFractionValues.push_back(wPt2FractionRecoMatched);
+		harmPtFractionRecoMatchedFractionValues.push_back(harmPtFractionRecoMatched);
+		wHarmPtFractionRecoMatchedFractionValues.push_back(wHarmPtFractionRecoMatched);
+		harmWPtFractionRecoMatchedFractionValues.push_back(harmWPtFractionRecoMatched);
+		harmPtAvgFractionRecoMatchedFractionValues.push_back(harmPtAvgFractionRecoMatched);
+		wHarmPtAvgFractionRecoMatchedFractionValues.push_back(wHarmPtAvgFractionRecoMatched);
+		harmWPtAvgFractionRecoMatchedFractionValues.push_back(harmWPtAvgFractionRecoMatched);
+
+		simFractionValues.push_back(sharedTracks/simV->nGenTrk);
+		wFractionSimFractionValues.push_back(wFractionSim);
+		ptFractionSimFractionValues.push_back(ptFractionSim);
+		wPtFractionSimFractionValues.push_back(wPtFractionSim);
+		pt2FractionSimFractionValues.push_back(pt2FractionSim);
+		wPt2FractionSimFractionValues.push_back(wPt2FractionSim);
+		simMatchedFractionValues.push_back(sharedTracks/simV->num_matched_reco_tracks);
+		ptFractionSimMatchedFractionValues.push_back(ptFractionSimMatched);
+		wPtFractionSimMatchedFractionValues.push_back(wPtFractionSimMatched);
+		pt2FractionSimMatchedFractionValues.push_back(pt2FractionSimMatched);
+		wPt2FractionSimMatchedFractionValues.push_back(wPt2FractionSimMatched);
+
+
   }
+
+	// sort the fraction values (at most 3 for each recoVertex, because a recoVertex is connected
+	// to at most three simVertices), then Fill three histograms with the fraction values by order of
+	// magnitude
+
+	std::sort(recoFractionValues.begin(), recoFractionValues.end());
+	std::sort(wFractionRecoFractionValues.begin(), wFractionRecoFractionValues.end());
+	std::sort(ptFractionRecoFractionValues.begin(), ptFractionRecoFractionValues.end());
+	std::sort(wPtFractionRecoFractionValues.begin(), wPtFractionRecoFractionValues.end());
+	std::sort(pt2FractionRecoFractionValues.begin(), pt2FractionRecoFractionValues.end());
+	std::sort(wPt2FractionRecoFractionValues.begin(), wPt2FractionRecoFractionValues.end());
+	std::sort(harmPtFractionRecoFractionValues.begin(), harmPtFractionRecoFractionValues.end());
+	std::sort(wHarmPtFractionRecoFractionValues.begin(), wHarmPtFractionRecoFractionValues.end());
+	std::sort(harmWPtFractionRecoFractionValues.begin(), harmWPtFractionRecoFractionValues.end());
+	std::sort(harmPtAvgFractionRecoFractionValues.begin(), harmPtAvgFractionRecoFractionValues.end());
+	std::sort(wHarmPtAvgFractionRecoFractionValues.begin(), wHarmPtAvgFractionRecoFractionValues.end());
+	std::sort(harmWPtAvgFractionRecoFractionValues.begin(), harmWPtAvgFractionRecoFractionValues.end());
+
+	std::sort(recoMatchedFractionValues.begin(), recoMatchedFractionValues.end());
+	std::sort(wFractionRecoMatchedFractionValues.begin(), wFractionRecoMatchedFractionValues.end());
+	std::sort(ptFractionRecoMatchedFractionValues.begin(), ptFractionRecoMatchedFractionValues.end());
+	std::sort(wPtFractionRecoMatchedFractionValues.begin(), wPtFractionRecoMatchedFractionValues.end());
+	std::sort(pt2FractionRecoMatchedFractionValues.begin(), pt2FractionRecoMatchedFractionValues.end());
+	std::sort(wPt2FractionRecoMatchedFractionValues.begin(), wPt2FractionRecoMatchedFractionValues.end());
+	std::sort(harmPtFractionRecoMatchedFractionValues.begin(), harmPtFractionRecoMatchedFractionValues.end());
+	std::sort(wHarmPtFractionRecoMatchedFractionValues.begin(), wHarmPtFractionRecoMatchedFractionValues.end());
+	std::sort(harmWPtFractionRecoMatchedFractionValues.begin(), harmWPtFractionRecoMatchedFractionValues.end());
+	std::sort(harmPtAvgFractionRecoMatchedFractionValues.begin(), harmPtAvgFractionRecoMatchedFractionValues.end());
+	std::sort(wHarmPtAvgFractionRecoMatchedFractionValues.begin(), wHarmPtAvgFractionRecoMatchedFractionValues.end());
+	std::sort(harmWPtAvgFractionRecoMatchedFractionValues.begin(), harmWPtAvgFractionRecoMatchedFractionValues.end());
+
+	std::sort(simFractionValues.begin(), simFractionValues.end());
+	std::sort(wFractionSimFractionValues.begin(), wFractionSimFractionValues.end());
+	std::sort(ptFractionSimFractionValues.begin(), ptFractionSimFractionValues.end());
+	std::sort(wPtFractionSimFractionValues.begin(), wPtFractionSimFractionValues.end());
+	std::sort(pt2FractionSimFractionValues.begin(), pt2FractionSimFractionValues.end());
+	std::sort(wPt2FractionSimFractionValues.begin(), wPt2FractionSimFractionValues.end());
+	std::sort(simMatchedFractionValues.begin(), simMatchedFractionValues.end());
+	std::sort(ptFractionSimMatchedFractionValues.begin(), ptFractionSimMatchedFractionValues.end());
+	std::sort(wPtFractionSimMatchedFractionValues.begin(), wPtFractionSimMatchedFractionValues.end());
+	std::sort(pt2FractionSimMatchedFractionValues.begin(), pt2FractionSimMatchedFractionValues.end());
+	std::sort(wPt2FractionSimMatchedFractionValues.begin(), wPt2FractionSimMatchedFractionValues.end());
+
+
+	for(size_t k = 1; k < 4; k++)	{
+	
+		if(recoFractionValues.size() >= k )
+			mes_[label][prefix+"Reco"+"_separated"+k]->Fill(recoFractionValues.pop_back());
+		if(wFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WFractionReco"+"_separated"+k]->Fill(wFractionRecoFractionValues.pop_back());
+		if(ptFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"PtFractionReco"+"_separated"+k]->Fill(ptFractionRecoFractionValues.pop_back());
+		if(wptFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPtFractionReco"+"_separated"+k]->Fill(wptFractionRecoFractionValues.pop_back());
+		if(pt2FractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"Pt2FractionReco"+"_separated"+k]->Fill(pt2FractionRecoFractionValues.pop_back());
+		if(wpt2FractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPt2FractionReco"+"_separated"+k]->Fill(wpt2FractionRecoFractionValues.pop_back());
+		if(harmPtFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmPtFractionReco"+"_separated"+k]->Fill(harmPtFractionRecoFractionValues.pop_back());
+		if(wHarmPtFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WHarmPtFractionReco"+"_separated"+k]->Fill(wHarmPtFractionRecoFractionValues.pop_back());
+		if(harmWPtFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmWPtFractionReco"+"_separated"+k]->Fill(harmWPtFractionRecoFractionValues.pop_back());
+		if(harmPtAvgFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmPtAvgFractionReco"+"_separated"+k]->Fill(harmPtAvgFractionRecoFractionValues.pop_back());
+		if(wHarmPtAvgFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WHarmPtAvgFractionReco"+"_separated"+k]->Fill(wHarmPtAvgFractionRecoFractionValues.pop_back());
+		if(harmWPtAvgFractionRecoFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmWPtAvgFractionReco"+"_separated"+k]->Fill(harmWPtAvgFractionRecoFractionValues.pop_back());
+
+		if(recoMatchedFractionValues.size() >= k )
+    	mes_[label][prefix+"RecoMatched"+"_separated"+k]->Fill(recoMatchedFractionValues.pop_back());
+		if(wFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WFractionRecoMatched"+"_separated"+k]->Fill(wFractionRecoMatchedFractionValues.pop_back());
+		if(ptFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"PtFractionRecoMatched"+"_separated"+k]->Fill(ptFractionRecoMatchedFractionValues.pop_back());
+		if(wptFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPtFractionRecoMatched"+"_separated"+k]->Fill(wptFractionRecoMatchedFractionValues.pop_back());
+		if(pt2FractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"Pt2FractionRecoMatched"+"_separated"+k]->Fill(pt2FractionRecoMatchedFractionValues.pop_back());
+		if(wpt2FractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPt2FractionRecoMatched"+"_separated"+k]->Fill(wpt2FractionRecoMatchedFractionValues.pop_back());
+		if(harmPtFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmPtFractionRecoMatched"+"_separated"+k]->Fill(harmPtFractionRecoMatchedFractionValues.pop_back());
+		if(wHarmPtFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WHarmPtFractionRecoMatched"+"_separated"+k]->Fill(wHarmPtFractionRecoMatchedFractionValues.pop_back());
+		if(harmWPtFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmWPtFractionRecoMatched"+"_separated"+k]->Fill(harmWPtFractionRecoMatchedFractionValues.pop_back());
+		if(harmPtAvgFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched"+"_separated"+k]->Fill(harmPtAvgFractionRecoMatchedFractionValues.pop_back());
+		if(wHarmPtAvgFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched"+"_separated"+k]->Fill(wHarmPtAvgFractionRecoMatchedFractionValues.pop_back());
+		if(harmWPtAvgFractionRecoMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched"+"_separated"+k]->Fill(harmWPtAvgFractionRecoMatchedFractionValues.pop_back());
+
+		if(simFractionValues.size() >= k )
+    	mes_[label][prefix+"Sim"+"_separated"+k]->Fill(simFractionValues.pop_back());
+		if(wFractionSimFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WFractionSim"+"_separated"+k]->Fill(wFractionSimFractionValues.pop_back());
+		if(ptFractionSimFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"PtFractionSim"+"_separated"+k]->Fill(ptFractionSimFractionValues.pop_back());
+		if(wptFractionSimFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPtFractionSim"+"_separated"+k]->Fill(wptFractionSimFractionValues.pop_back());
+		if(pt2FractionSimFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"Pt2FractionSim"+"_separated"+k]->Fill(pt2FractionSimFractionValues.pop_back());
+		if(wpt2FractionSimFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPt2FractionSim"+"_separated"+k]->Fill(wpt2FractionSimFractionValues.pop_back());
+		if(simMatchedFractionValues.size() >= k )
+    	mes_[label][prefix+"SimMatched"+"_separated"+k]->Fill(simMatchedFractionValues.pop_back());
+		if(ptFractionSimMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"PtFractionSimMatched"+"_separated"+k]->Fill(ptFractionSimMatched);
+		if(wptFractionSimMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPtFractionSimMatched"+"_separated"+k]->Fill(wptFractionSimMatched);
+		if(pt2FractionSimMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"Pt2FractionSimMatched"+"_separated"+k]->Fill(pt2FractionSimMatched);
+		if(wpt2FractionSimMatchedFractionValues.size() >= k )
+    	mes_[label][ptPrefix+"WPt2FractionSimMatched"+"_separated"+k]->Fill(wpt2FractionSimMatched);
+	}
+
 }
 
 void PrimaryVertexAnalyzer4PUSlimmed::fillResolutionAndPullHistograms(
