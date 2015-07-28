@@ -1006,6 +1006,9 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
 		ptPrefix = "RecoAllAssoc2GenMultiMatched_SharedTrack";
   }
 
+	// calculate first the fractions (at most 3 for each recoVertex, because a recoVertex is connected
+	// to at most three simVertices), then Fill three histograms with the fraction values by order of
+	// magnitude
   for(size_t i=0; i<v.sim_vertices.size(); ++i) {
     const double sharedTracks = v.sim_vertices_num_shared_tracks[i];
     const simPrimaryVertex *simV = v.sim_vertices_internal[i];
