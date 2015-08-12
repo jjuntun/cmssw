@@ -176,6 +176,7 @@ class PrimaryVertexAnalyzer4PUSlimmed : public DQMEDAnalyzer {
   double sigma_z_match_;
   double abs_z_match_;
   std::string root_folder_;
+  bool doDetailedHistograms_;
 
   std::map<std::string, std::map<std::string, MonitorElement*> > mes_;
   const reco::RecoToSimCollection *r2s_;

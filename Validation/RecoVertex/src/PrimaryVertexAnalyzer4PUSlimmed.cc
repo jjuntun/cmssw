@@ -22,6 +22,10 @@
 
 #include <numeric>
 
+
+#include <string>
+#include <sstream>
+
 //
 // constructors and destructor
 //
@@ -37,6 +41,7 @@ PrimaryVertexAnalyzer4PUSlimmed::PrimaryVertexAnalyzer4PUSlimmed(
       root_folder_(
           iConfig.getUntrackedParameter<std::string>("root_folder",
                                                 "Validation/Vertices")),
+      doDetailedHistograms_(iConfig.getUntrackedParameter<bool>("doDetailedHistograms", false)),
       vecPileupSummaryInfoToken_(consumes<std::vector<PileupSummaryInfo> >(
           edm::InputTag(std::string("addPileupInfo")))),
       recoTrackCollectionToken_(consumes<reco::TrackCollection>(
@@ -252,6 +257,8 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
         i.book1D("TruePVLocationIndexSignalIsNotHighest",
                  "TruePVLocationIndexSignalIsNotHighestInRecoVertexCollection",
                  12, -1.5, 10.5);
+
+
     // All Generated Vertices. Used for Efficiency plots We kind of
     // duplicate plots here in case we want to perform more detailed
     // studies on a selection of generated vertices, not on all of them.
@@ -332,155 +339,8 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
         "GeneratedAllAssoc2RecoMultiMatched_ClosestDistanceZ",
         30, &log_bins[0]);
 
-//GenAllAssoc2RecoSingleMatched_SharedTrackFraction
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSim",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched"] =
-        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched",
-                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched",
-                 50, 0, 1);		
-
-
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSim",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched",
-                 50, 0, 1);		
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim",
-                 50, 0, 1);
-    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched"] =
-        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched",
-                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched",
-                 50, 0, 1);		
-
     // All Reco Vertices. Used for {Fake,Duplicate}-Rate plots
+    
     mes_[label]["RecoAllAssoc2Gen_NumVertices"] =
         i.book1D("RecoAllAssoc2Gen_NumVertices",
                  "ReconstructedAllAssoc2Gen_NumVertices", 100, 0., 200.);
@@ -710,69 +570,2002 @@ void PrimaryVertexAnalyzer4PUSlimmed::bookHistograms(
 
     // Shared tracks
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionReco", 50, 0, 1);
-
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionReco", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionReco", 50, 0, 1);
-
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
-
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
-
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim", 50, 0, 1);
     book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched", 50, 0, 1);		
     book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);
-    book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched", 50, 0, 1);
+
+    mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco"] =
+      i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco",
+               "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionReco",
+               50, 0, 1);
+    mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco"] =
+      i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco",
+               "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionReco",
+               50, 0, 1);                 
+    mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched"] =
+      i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched",
+               "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched",
+               50, 0, 1);    
+    mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched"] =
+      i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched",
+               "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched",
+               50, 0, 1); 
+                                
+    mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim"] =
+      i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim",
+               "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSim",
+               50, 0, 1);
+    mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim"] =
+      i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim",
+               "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSim",
+               50, 0, 1);
+                                
+    mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched"] =
+      i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched",
+               "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched",
+               50, 0, 1);    
+    mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched"] =
+      i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched",
+               "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched",
+               50, 0, 1);                 
+
+
+    book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco", 50, 0, 1);
+    book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco", 50, 0, 1);
+    book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched", 50, 0, 1);
+    book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched", 50, 0, 1);
+    book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim", 50, 0, 1);
+    book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim", 50, 0, 1);
+    book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched", 50, 0, 1);
+    book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched", 50, 0, 1);
+
+
+    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionReco",
+                 50, 0, 1);                  
+    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco"] =
+      i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco",
+               "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionReco",
+               50, 0, 1);
+    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched",
+                 50, 0, 1);    
+    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched"] =
+      i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched",
+               "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched",
+               50, 0, 1);    
+                                  
+    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSim",
+                 50, 0, 1);
+    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim"] =
+      i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim",
+               "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSim",
+               50, 0, 1);                   
+    mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched",
+                 50, 0, 1);    
+    mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched"] =
+      i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched",
+               "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched",
+               50, 0, 1);    
+
+
+    
+    if(doDetailedHistograms_)
+    {
+      //Gen
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionReco", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionReco", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
+
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim", 50, 0, 1); 
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);    
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);
+
+      // Separated sharedTrack 1
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionReco_separated1", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionReco_separated1", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated1", 50, 0, 1); 
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated1", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated1", 50, 0, 1);
+
+      // Separated sharedTrack 2
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionReco_separated2", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionReco_separated2", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated2", 50, 0, 1); 
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated2", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated2", 50, 0, 1);
+
+
+      // Separated sharedTrack 3
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionReco_separated3", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionReco_separated3", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated3", 50, 0, 1);  
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated3", 50, 0, 1);
+      book1d("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated3", 50, 0, 1);
+
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched",
+                 50, 0, 1);    
+ 
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched",
+                 50, 0, 1);    
+
+
+
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched",
+                 50, 0, 1);    
+
+
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched",
+                 50, 0, 1);  
+    
+      // Gen separated1
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 50, 0, 1);    
+
+
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated1"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 50, 0, 1);  
+
+      // Gen separated2
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 50, 0, 1);    
+
+
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated2"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 50, 0, 1);  
+
+      // Gen separated3
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPtFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 "GeneratedAllAssoc2RecoSingleMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 50, 0, 1);    
+
+
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPtFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated3"] =
+        i.book1D("GenAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 "GeneratedAllAssoc2RecoMultiMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 50, 0, 1);  
+
+
+      // Reco
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionReco", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionReco", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionReco", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched", 50, 0, 1);
+
+
+      // Separated sharedTrack plots 1
+        
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionReco_separated1", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionReco_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionReco_separated1", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated1", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated1", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated1", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated1", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated1", 50, 0, 1);
+       
+
+      // Separated sharedTrack 2
+      
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionReco_separated2", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionReco_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionReco_separated2", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated2", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated2", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated2", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated2", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated2", 50, 0, 1);
+      
+      // Separated sharedTrack 3
+      
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionReco_separated3", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionReco_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionReco_separated3", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWHarmPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackHarmWPtAvgFractionRecoMatched_separated3", 50, 0, 1);
+
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated3", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated3", 50, 0, 1);    
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated3", 50, 0, 1);
+      book1d("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated3", 50, 0, 1);
+      
+
+
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched",
+                 50, 0, 1);    
+
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched",
+                 50, 0, 1);
+
+
+   
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched",
+                 50, 0, 1);    
+
+    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched",
+                 50, 0, 1); 
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched",
+                 50, 0, 1);  
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched",
+                 50, 0, 1);  
+    
+      // Reco separated1
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 50, 0, 1); 
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated1",
+                 50, 0, 1);     
+
+
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated1",
+                 50, 0, 1);  
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated1",
+                 50, 0, 1);  
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated1",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated1",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated1"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated1",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated1",
+                 50, 0, 1);  
+
+      // Reco separated2
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated2",
+                 50, 0, 1);   
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated2",
+                 50, 0, 1);    
+
+
+
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated2",
+                 50, 0, 1);  
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated2",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated2",
+                 50, 0, 1);  
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated2",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated2"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated2",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated2",
+                 50, 0, 1);  
+
+      // Reco separated3
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPtFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPtFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 50, 0, 1);   
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenSingleMatched_SharedTrackWPt2FractionSimMatched_separated3",
+                 50, 0, 1);    
+
+
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionReco_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionRecoMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackFractionSimMatched_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPtFractionSimMatched_separated3",
+                 50, 0, 1);   
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPtFractionSimMatched_separated3",
+                 50, 0, 1);    
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackPt2FractionSimMatched_separated3",
+                 50, 0, 1); 
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSim_separated3",
+                 50, 0, 1);
+      mes_[label]["RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated3"] =
+        i.book1D("RecoAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated3",
+                 "ReconstructedAllAssoc2GenMultiMatched_SharedTrackWPt2FractionSimMatched_separated3",
+                 50, 0, 1);  
+
+    }
   }
 }
 
@@ -836,65 +2629,405 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
   }
 
   std::string prefix;
-	std::string ptPrefix;
+  std::string ptPrefix;
   if(v.rec_vertices.size() == 1) {
     prefix = "GenAllAssoc2RecoSingleMatched_SharedTrackFraction";
-		ptPrefix = "GenAllAssoc2RecoSingleMatched_SharedTrack";
+    ptPrefix = "GenAllAssoc2RecoSingleMatched_SharedTrack";
   }
   else if(v.rec_vertices.size() > 1) {
     prefix = "GenAllAssoc2RecoMultiMatched_SharedTrackFraction";
-		ptPrefix = "GenAllAssoc2RecoMultiMatched_SharedTrack";
+    ptPrefix = "GenAllAssoc2RecoMultiMatched_SharedTrack";
   }
+
+
+  //simVertex-recoVertex fraction values
+
+  std::vector<double> recoFractionValues;
+  std::vector<double> wFractionRecoFractionValues;
+  std::vector<double> ptFractionRecoFractionValues;
+  std::vector<double> wPtFractionRecoFractionValues;
+  std::vector<double> pt2FractionRecoFractionValues;
+  std::vector<double> wPt2FractionRecoFractionValues;
+
+
+  std::vector<double> recoMatchedFractionValues;
+  std::vector<double> wFractionRecoMatchedFractionValues;
+  std::vector<double> ptFractionRecoMatchedFractionValues;
+  std::vector<double> wPtFractionRecoMatchedFractionValues;
+  std::vector<double> pt2FractionRecoMatchedFractionValues;
+  std::vector<double> wPt2FractionRecoMatchedFractionValues;
+
+
+  std::vector<double> simFractionValues;
+  std::vector<double> ptFractionSimFractionValues;
+  std::vector<double> pt2FractionSimFractionValues;
+  std::vector<double> simMatchedFractionValues;
+  std::vector<double> ptFractionSimMatchedFractionValues;
+  std::vector<double> pt2FractionSimMatchedFractionValues;
+
 
   for(size_t i=0; i<v.rec_vertices.size(); ++i) {
-		double fractionReco = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "", "Reco");
-		double wFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "W", "Reco");
-		double ptFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt", "Reco");
-		double wptFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt", "Reco");
-		double pt2FractionReco = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt2", "Reco");
-		double wpt2FractionReco = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt2", "Reco");
-		double fractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "", "RecoMatched");
-		double wFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "W", "RecoMatched");
-		double ptFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt", "RecoMatched");
-		double wptFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt", "RecoMatched");
-		double pt2FractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt2", "RecoMatched");
-		double wpt2FractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt2", "RecoMatched");
+    std::vector<double> numerators = calculateVertexSharedTracksMomentumFractionNumerators(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_);
+    std::vector<std::vector<double>> denominatorGroups = calculateVertexSharedTracksMomentumFractionDenominators(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_);
+    
+    double fractionReco = numerators[0]/denominatorGroups[0][0];
+    
+    double wFractionReco;
+    double ptFractionReco;
+    double wPtFractionReco;
+    double pt2FractionReco;
+    double wPt2FractionReco;
+    double harmPtFractionReco;
+    double wHarmPtFractionReco;
+    double harmWPtFractionReco;
+    double harmPtAvgFractionReco;
+    double wHarmPtAvgFractionReco;
+    double harmWPtAvgFractionReco;
 
-		double fractionSim = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "", "Sim");
-		double ptFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt", "Sim");
-		//double wptFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt", "Sim");
-		double pt2FractionSim = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt2", "Sim");
-		//double wpt2FractionSim = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt2", "Sim");
-		double fractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "", "SimMatched");
-		double ptFractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt", "SimMatched");
-		//double wptFractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt", "SimMatched");
-		double pt2FractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "Pt2", "SimMatched");
-		//double wpt2FractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, "WPt2", "SimMatched");
+    double wFractionRecoMatched;
+    double ptFractionRecoMatched;
+    double wPtFractionRecoMatched;
+    double pt2FractionRecoMatched;
+    double wPt2FractionRecoMatched;
+    double harmPtFractionRecoMatched;
+    double wHarmPtFractionRecoMatched;
+    double harmWPtFractionRecoMatched;
+    double harmPtAvgFractionRecoMatched;
+    double wHarmPtAvgFractionRecoMatched;
+    double harmWPtAvgFractionRecoMatched;
 
+    double wFractionSim;
+    double ptFractionSim;
+    double wPtFractionSim;
+    double pt2FractionSim;
+    double wPt2FractionSim;
+    double ptFractionSimMatched;
+    double wPtFractionSimMatched;
+    double pt2FractionSimMatched;
+    double wPt2FractionSimMatched;
 
+    // avoid unused variable error with this trick
+    (void)wFractionReco;
+    (void)ptFractionReco;
+    (void)wPtFractionReco;
+    (void)pt2FractionReco;
+    (void)wPt2FractionReco;
+    (void)harmPtFractionReco;
+    (void)wHarmPtFractionReco;
+    (void)harmWPtFractionReco;
+    (void)harmPtAvgFractionReco;
+    (void)wHarmPtAvgFractionReco;
+    (void)harmWPtAvgFractionReco;
+
+    (void)wFractionRecoMatched;
+    (void)ptFractionRecoMatched;
+    (void)wPtFractionRecoMatched;
+    (void)pt2FractionRecoMatched;
+    (void)wPt2FractionRecoMatched;
+    (void)harmPtFractionRecoMatched;
+    (void)wHarmPtFractionRecoMatched;
+    (void)harmWPtFractionRecoMatched;
+    (void)harmPtAvgFractionRecoMatched;
+    (void)wHarmPtAvgFractionRecoMatched;
+    (void)harmWPtAvgFractionRecoMatched;
+
+    (void)wFractionSim;
+    (void)ptFractionSim;
+    (void)wPtFractionSim;
+    (void)pt2FractionSim;
+    (void)wPt2FractionSim;
+    (void)ptFractionSimMatched;
+    (void)wPtFractionSimMatched;
+    (void)pt2FractionSimMatched;
+    (void)wPt2FractionSimMatched;
+    
+    if(doDetailedHistograms_)
+    {
+      wFractionReco = numerators[1]/denominatorGroups[0][1];
+      ptFractionReco = numerators[2]/denominatorGroups[0][2];
+      wPtFractionReco = numerators[3]/denominatorGroups[0][3];
+      pt2FractionReco = numerators[4]/denominatorGroups[0][4];
+      wPt2FractionReco = numerators[5]/denominatorGroups[0][5];
+    }
+    
+    double fractionRecoMatched = numerators[0]/denominatorGroups[1][0];
+    
+    if(doDetailedHistograms_)
+    {
+      wFractionRecoMatched = numerators[1]/denominatorGroups[1][1];
+      ptFractionRecoMatched = numerators[2]/denominatorGroups[1][2];
+      wPtFractionRecoMatched = numerators[3]/denominatorGroups[1][3];
+      pt2FractionRecoMatched = numerators[4]/denominatorGroups[1][4];
+      wPt2FractionRecoMatched = numerators[5]/denominatorGroups[1][5];
+    }
+    
+    double fractionSim = numerators[0]/denominatorGroups[2][0];
+    
+    if(doDetailedHistograms_)
+    {
+      ptFractionSim = numerators[1]/denominatorGroups[2][1];
+      pt2FractionSim = numerators[2]/denominatorGroups[2][2];
+    }
+  
+    double fractionSimMatched = numerators[0]/denominatorGroups[3][0];
+  
+    if(doDetailedHistograms_)
+    {
+      ptFractionSimMatched = numerators[1]/denominatorGroups[3][1];
+      pt2FractionSimMatched = numerators[2]/denominatorGroups[3][2];
+    }
+    
     mes_[label][prefix+"Reco"]->Fill(fractionReco);
-    mes_[label][ptPrefix+"WFractionReco"]->Fill(wFractionReco);
-    mes_[label][ptPrefix+"PtFractionReco"]->Fill(ptFractionReco);
-    mes_[label][ptPrefix+"WPtFractionReco"]->Fill(wptFractionReco);
-    mes_[label][ptPrefix+"Pt2FractionReco"]->Fill(pt2FractionReco);
-    mes_[label][ptPrefix+"WPt2FractionReco"]->Fill(wpt2FractionReco);
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"WFractionReco"]->Fill(wFractionReco);
+      mes_[label][ptPrefix+"PtFractionReco"]->Fill(ptFractionReco);
+      mes_[label][ptPrefix+"WPtFractionReco"]->Fill(wPtFractionReco);
+      mes_[label][ptPrefix+"Pt2FractionReco"]->Fill(pt2FractionReco);
+      mes_[label][ptPrefix+"WPt2FractionReco"]->Fill(wPt2FractionReco);
+    }
+    
     mes_[label][prefix+"RecoMatched"]->Fill(fractionRecoMatched);
-    mes_[label][ptPrefix+"WFractionRecoMatched"]->Fill(wFractionRecoMatched);
-    mes_[label][ptPrefix+"PtFractionRecoMatched"]->Fill(ptFractionRecoMatched);
-    mes_[label][ptPrefix+"WPtFractionRecoMatched"]->Fill(wptFractionRecoMatched);
-    mes_[label][ptPrefix+"Pt2FractionRecoMatched"]->Fill(pt2FractionRecoMatched);
-    mes_[label][ptPrefix+"WPt2FractionRecoMatched"]->Fill(wpt2FractionRecoMatched);
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"WFractionRecoMatched"]->Fill(wFractionRecoMatched);
+      mes_[label][ptPrefix+"PtFractionRecoMatched"]->Fill(ptFractionRecoMatched);
+      mes_[label][ptPrefix+"WPtFractionRecoMatched"]->Fill(wPtFractionRecoMatched);
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched"]->Fill(pt2FractionRecoMatched);
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched"]->Fill(wPt2FractionRecoMatched);
+    }
+    
     mes_[label][prefix+"Sim"]->Fill(fractionSim);
-    mes_[label][ptPrefix+"PtFractionSim"]->Fill(ptFractionSim);
-    //mes_[label][ptPrefix+"WPtFractionSim"]->Fill(wptFractionSim);
-    mes_[label][ptPrefix+"Pt2FractionSim"]->Fill(pt2FractionSim);
-    //mes_[label][ptPrefix+"WPt2FractionSim"]->Fill(wpt2FractionSim);
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"PtFractionSim"]->Fill(ptFractionSim);
+      mes_[label][ptPrefix+"Pt2FractionSim"]->Fill(pt2FractionSim);
+    }
+    
     mes_[label][prefix+"SimMatched"]->Fill(fractionSimMatched);
-    mes_[label][ptPrefix+"PtFractionSimMatched"]->Fill(ptFractionSimMatched);
-    //mes_[label][ptPrefix+"WPtFractionSimMatched"]->Fill(wptFractionSimMatched);
-    mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
-    //mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(wpt2FractionSimMatched);
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"PtFractionSimMatched"]->Fill(ptFractionSimMatched);
+      mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
+    }
+
+    if(doDetailedHistograms_)
+    {
+      recoFractionValues.push_back(fractionReco);
+      wFractionRecoFractionValues.push_back(wFractionReco);
+      ptFractionRecoFractionValues.push_back(ptFractionReco);
+      wPtFractionRecoFractionValues.push_back(wPtFractionReco);
+      pt2FractionRecoFractionValues.push_back(pt2FractionReco);
+      wPt2FractionRecoFractionValues.push_back(wPt2FractionReco);
+
+      recoMatchedFractionValues.push_back(fractionRecoMatched);
+      wFractionRecoMatchedFractionValues.push_back(wFractionRecoMatched);
+      ptFractionRecoMatchedFractionValues.push_back(ptFractionRecoMatched);
+      wPtFractionRecoMatchedFractionValues.push_back(wPtFractionRecoMatched);
+      pt2FractionRecoMatchedFractionValues.push_back(pt2FractionRecoMatched);
+      wPt2FractionRecoMatchedFractionValues.push_back(wPt2FractionRecoMatched);
+
+      simFractionValues.push_back(fractionSim);
+      ptFractionSimFractionValues.push_back(ptFractionSim);
+      pt2FractionSimFractionValues.push_back(pt2FractionSim);
+      simMatchedFractionValues.push_back(fractionSimMatched);
+      ptFractionSimMatchedFractionValues.push_back(ptFractionSimMatched);
+      pt2FractionSimMatchedFractionValues.push_back(pt2FractionSimMatched);
+    }
+    
   }
+
+
+  // sort the fraction values (at most 3 for each simVertex, because a simVertex is connected
+  // to at most three recoVertices), then Fill three histograms with the fraction values by order of
+  // magnitude
+  
+  if(doDetailedHistograms_)
+  {
+    std::sort(recoFractionValues.begin(), recoFractionValues.end());
+    std::sort(wFractionRecoFractionValues.begin(), wFractionRecoFractionValues.end());
+    std::sort(ptFractionRecoFractionValues.begin(), ptFractionRecoFractionValues.end());
+    std::sort(wPtFractionRecoFractionValues.begin(), wPtFractionRecoFractionValues.end());
+    std::sort(pt2FractionRecoFractionValues.begin(), pt2FractionRecoFractionValues.end());
+    std::sort(wPt2FractionRecoFractionValues.begin(), wPt2FractionRecoFractionValues.end());
+
+    std::sort(recoMatchedFractionValues.begin(), recoMatchedFractionValues.end());
+    std::sort(wFractionRecoMatchedFractionValues.begin(), wFractionRecoMatchedFractionValues.end());
+    std::sort(ptFractionRecoMatchedFractionValues.begin(), ptFractionRecoMatchedFractionValues.end());
+    std::sort(wPtFractionRecoMatchedFractionValues.begin(), wPtFractionRecoMatchedFractionValues.end());
+    std::sort(pt2FractionRecoMatchedFractionValues.begin(), pt2FractionRecoMatchedFractionValues.end());
+    std::sort(wPt2FractionRecoMatchedFractionValues.begin(), wPt2FractionRecoMatchedFractionValues.end());
+
+    std::sort(simFractionValues.begin(), simFractionValues.end());
+    std::sort(ptFractionSimFractionValues.begin(), ptFractionSimFractionValues.end());
+    std::sort(pt2FractionSimFractionValues.begin(), pt2FractionSimFractionValues.end());
+    std::sort(simMatchedFractionValues.begin(), simMatchedFractionValues.end());
+    std::sort(ptFractionSimMatchedFractionValues.begin(), ptFractionSimMatchedFractionValues.end());
+    std::sort(pt2FractionSimMatchedFractionValues.begin(), pt2FractionSimMatchedFractionValues.end());
+
+
+    // reverse order, so that the biggest fraction is first
+
+    std::reverse(recoFractionValues.begin(), recoFractionValues.end());
+    std::reverse(wFractionRecoFractionValues.begin(), wFractionRecoFractionValues.end());
+    std::reverse(ptFractionRecoFractionValues.begin(), ptFractionRecoFractionValues.end());
+    std::reverse(wPtFractionRecoFractionValues.begin(), wPtFractionRecoFractionValues.end());
+    std::reverse(pt2FractionRecoFractionValues.begin(), pt2FractionRecoFractionValues.end());
+    std::reverse(wPt2FractionRecoFractionValues.begin(), wPt2FractionRecoFractionValues.end());
+
+    std::reverse(recoMatchedFractionValues.begin(), recoMatchedFractionValues.end());
+    std::reverse(wFractionRecoMatchedFractionValues.begin(), wFractionRecoMatchedFractionValues.end());
+    std::reverse(ptFractionRecoMatchedFractionValues.begin(), ptFractionRecoMatchedFractionValues.end());
+    std::reverse(wPtFractionRecoMatchedFractionValues.begin(), wPtFractionRecoMatchedFractionValues.end());
+    std::reverse(pt2FractionRecoMatchedFractionValues.begin(), pt2FractionRecoMatchedFractionValues.end());
+    std::reverse(wPt2FractionRecoMatchedFractionValues.begin(), wPt2FractionRecoMatchedFractionValues.end());
+
+    std::reverse(simFractionValues.begin(), simFractionValues.end());
+    std::reverse(ptFractionSimFractionValues.begin(), ptFractionSimFractionValues.end());
+    std::reverse(pt2FractionSimFractionValues.begin(), pt2FractionSimFractionValues.end());
+    std::reverse(simMatchedFractionValues.begin(), simMatchedFractionValues.end());
+    std::reverse(ptFractionSimMatchedFractionValues.begin(), ptFractionSimMatchedFractionValues.end());
+    std::reverse(pt2FractionSimMatchedFractionValues.begin(), pt2FractionSimMatchedFractionValues.end());
+
+
+    // Filling values 1
+
+    if(recoFractionValues.size() >= 1 )
+      mes_[label][prefix+"Reco_separated1"]->Fill(recoFractionValues.at(0));
+    if(wFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WFractionReco_separated1"]->Fill(wFractionRecoFractionValues.at(0));
+    if(ptFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionReco_separated1"]->Fill(ptFractionRecoFractionValues.at(0));
+    if(wPtFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPtFractionReco_separated1"]->Fill(wPtFractionRecoFractionValues.at(0));
+    if(pt2FractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionReco_separated1"]->Fill(pt2FractionRecoFractionValues.at(0));
+    if(wPt2FractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPt2FractionReco_separated1"]->Fill(wPt2FractionRecoFractionValues.at(0));
+
+
+    if(recoMatchedFractionValues.size() >= 1 )
+      mes_[label][prefix+"RecoMatched_separated1"]->Fill(recoMatchedFractionValues.at(0));
+    if(wFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WFractionRecoMatched_separated1"]->Fill(wFractionRecoMatchedFractionValues.at(0));
+    if(ptFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionRecoMatched_separated1"]->Fill(ptFractionRecoMatchedFractionValues.at(0));
+    if(wPtFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPtFractionRecoMatched_separated1"]->Fill(wPtFractionRecoMatchedFractionValues.at(0));
+    if(pt2FractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched_separated1"]->Fill(pt2FractionRecoMatchedFractionValues.at(0));
+    if(wPt2FractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched_separated1"]->Fill(wPt2FractionRecoMatchedFractionValues.at(0));
+
+
+    
+    if(simFractionValues.size() >= 1 )
+      mes_[label][prefix+"Sim_separated1"]->Fill(simFractionValues.at(0));
+    if(ptFractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionSim_separated1"]->Fill(ptFractionSimFractionValues.at(0));
+    if(pt2FractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionSim_separated1"]->Fill(pt2FractionSimFractionValues.at(0));
+    if(simMatchedFractionValues.size() >= 1 )
+      mes_[label][prefix+"SimMatched_separated1"]->Fill(simMatchedFractionValues.at(0));
+    if(ptFractionSimMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionSimMatched_separated1"]->Fill(ptFractionSimMatchedFractionValues.at(0));
+    if(pt2FractionSimMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionSimMatched_separated1"]->Fill(pt2FractionSimMatchedFractionValues.at(0));
+
+
+    // Filling values 2
+
+    if(recoFractionValues.size() >= 2 )
+      mes_[label][prefix+"Reco_separated2"]->Fill(recoFractionValues.at(1));
+    if(wFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WFractionReco_separated2"]->Fill(wFractionRecoFractionValues.at(1));
+    if(ptFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionReco_separated2"]->Fill(ptFractionRecoFractionValues.at(1));
+    if(wPtFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPtFractionReco_separated2"]->Fill(wPtFractionRecoFractionValues.at(1));
+    if(pt2FractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionReco_separated2"]->Fill(pt2FractionRecoFractionValues.at(1));
+    if(wPt2FractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPt2FractionReco_separated2"]->Fill(wPt2FractionRecoFractionValues.at(1));
+
+
+    if(recoMatchedFractionValues.size() >= 2 )
+      mes_[label][prefix+"RecoMatched_separated2"]->Fill(recoMatchedFractionValues.at(1));
+    if(wFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WFractionRecoMatched_separated2"]->Fill(wFractionRecoMatchedFractionValues.at(1));
+    if(ptFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionRecoMatched_separated2"]->Fill(ptFractionRecoMatchedFractionValues.at(1));
+    if(wPtFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPtFractionRecoMatched_separated2"]->Fill(wPtFractionRecoMatchedFractionValues.at(1));
+    if(pt2FractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched_separated2"]->Fill(pt2FractionRecoMatchedFractionValues.at(1));
+    if(wPt2FractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched_separated2"]->Fill(wPt2FractionRecoMatchedFractionValues.at(1));
+
+
+    if(simFractionValues.size() >= 2 )
+      mes_[label][prefix+"Sim_separated2"]->Fill(simFractionValues.at(1));
+    if(ptFractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionSim_separated2"]->Fill(ptFractionSimFractionValues.at(1));
+    if(pt2FractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionSim_separated2"]->Fill(pt2FractionSimFractionValues.at(1));
+    if(simMatchedFractionValues.size() >= 2 )
+      mes_[label][prefix+"SimMatched_separated2"]->Fill(simMatchedFractionValues.at(1));
+    if(ptFractionSimMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionSimMatched_separated2"]->Fill(ptFractionSimMatchedFractionValues.at(1));
+    if(pt2FractionSimMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionSimMatched_separated2"]->Fill(pt2FractionSimMatchedFractionValues.at(1));
+
+
+    // Filling values 3
+
+
+    if(recoFractionValues.size() >= 3 )
+      mes_[label][prefix+"Reco_separated3"]->Fill(recoFractionValues.at(2));
+    if(wFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WFractionReco_separated3"]->Fill(wFractionRecoFractionValues.at(2));
+    if(ptFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionReco_separated3"]->Fill(ptFractionRecoFractionValues.at(2));
+    if(wPtFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPtFractionReco_separated3"]->Fill(wPtFractionRecoFractionValues.at(2));
+    if(pt2FractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionReco_separated3"]->Fill(pt2FractionRecoFractionValues.at(2));
+    if(wPt2FractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPt2FractionReco_separated3"]->Fill(wPt2FractionRecoFractionValues.at(2));
+
+
+    if(recoMatchedFractionValues.size() >= 3 )
+      mes_[label][prefix+"RecoMatched_separated3"]->Fill(recoMatchedFractionValues.at(2));
+    if(wFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WFractionRecoMatched_separated3"]->Fill(wFractionRecoMatchedFractionValues.at(2));
+    if(ptFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionRecoMatched_separated3"]->Fill(ptFractionRecoMatchedFractionValues.at(2));
+    if(wPtFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPtFractionRecoMatched_separated3"]->Fill(wPtFractionRecoMatchedFractionValues.at(2));
+    if(pt2FractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched_separated3"]->Fill(pt2FractionRecoMatchedFractionValues.at(2));
+    if(wPt2FractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched_separated3"]->Fill(wPt2FractionRecoMatchedFractionValues.at(2));
+
+
+    if(simFractionValues.size() >= 3 )
+      mes_[label][prefix+"Sim_separated3"]->Fill(simFractionValues.at(2));
+    if(ptFractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionSim_separated3"]->Fill(ptFractionSimFractionValues.at(2));
+    if(pt2FractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionSim_separated3"]->Fill(pt2FractionSimFractionValues.at(2));
+    if(simMatchedFractionValues.size() >= 3 )
+      mes_[label][prefix+"SimMatched_separated3"]->Fill(simMatchedFractionValues.at(2));
+    if(ptFractionSimMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionSimMatched_separated3"]->Fill(ptFractionSimMatchedFractionValues.at(2));
+    if(pt2FractionSimMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionSimMatched_separated3"]->Fill(pt2FractionSimMatchedFractionValues.at(2));
+  }
+  
 
 }
 
@@ -976,15 +3109,18 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
 
 
   std::string prefix;
+  std::string ptPrefix;
+
   if(v.sim_vertices.size() == 1) {
     prefix = "RecoAllAssoc2GenSingleMatched_SharedTrackFraction";
-		ptPrefix = "RecoAllAssoc2GenSingleMatched_SharedTrack";
+    ptPrefix = "RecoAllAssoc2GenSingleMatched_SharedTrack";
   }
   else if(v.sim_vertices.size() > 1) {
     prefix = "RecoAllAssoc2GenMultiMatched_SharedTrackFraction";
+    ptPrefix = "RecoAllAssoc2GenMultiMatched_SharedTrack";
   }
 
-	//recoVertex-simVertex fraction values
+  //recoVertex-simVertex fraction values
 
   std::vector<double> recoFractionValues;
   std::vector<double> wFractionRecoFractionValues;
@@ -1025,241 +3161,537 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
   std::vector<double> wPt2FractionSimMatchedFractionValues;
 
 
+
   for(size_t i=0; i<v.sim_vertices.size(); ++i) {
     const double sharedTracks = v.sim_vertices_num_shared_tracks[i];
     const simPrimaryVertex *simV = v.sim_vertices_internal[i];
-		
-		double wFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "W", "Reco");
-		double ptFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt", "Reco");
-		double wptFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt", "Reco");
-		double pt2FractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt2", "Reco");
-		double wpt2FractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt2", "Reco");
-		double harmPtFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmPt", "Reco");
-		double wHarmPtFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WHarmPt", "Reco");
-		double harmWPtFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmWPt", "Reco");
-		double harmPtAvgFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmPtAvg", "Reco");
-		double wHarmPtAvgFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WHarmPtAvg", "Reco");
-		double harmWPtAvgFractionReco = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmWPtAvg", "Reco");
 
-		double wFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "W", "RecoMatched");
-		double ptFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt", "RecoMatched");
-		double wptFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt", "RecoMatched");
-		double pt2FractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt2", "RecoMatched");
-		double wpt2FractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt2", "RecoMatched");
-		double harmPtFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmPt", "RecoMatched");
-		double wHarmPtFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WHarmPt", "RecoMatched");
-		double harmWPtFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmWPt", "RecoMatched");
-		double harmPtAvgFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmPtAvg", "RecoMatched");
-		double wHarmPtAvgFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WHarmPtAvg", "RecoMatched");
-		double harmWPtAvgFractionRecoMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "HarmWPtAvg", "RecoMatched");
+    double wFractionReco;
+    double ptFractionReco;
+    double wPtFractionReco;
+    double pt2FractionReco;
+    double wPt2FractionReco;
+    double harmPtFractionReco;
+    double wHarmPtFractionReco;
+    double harmWPtFractionReco;
+    double harmPtAvgFractionReco;
+    double wHarmPtAvgFractionReco;
+    double harmWPtAvgFractionReco;
 
-		double ptFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt", "Sim");
-		double wptFractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt", "Sim");
-		double pt2FractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt2", "Sim");
-		double wpt2FractionSim = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt2", "Sim");
-		double ptFractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt", "SimMatched");
-		double wptFractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt", "SimMatched");
-		double pt2FractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "Pt2", "SimMatched");
-		double wpt2FractionSimMatched = calculateVertexSharedTracksMomentumFraction(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, "WPt2", "SimMatched");
-		
+    double wFractionRecoMatched;
+    double ptFractionRecoMatched;
+    double wPtFractionRecoMatched;
+    double pt2FractionRecoMatched;
+    double wPt2FractionRecoMatched;
+    double harmPtFractionRecoMatched;
+    double wHarmPtFractionRecoMatched;
+    double harmWPtFractionRecoMatched;
+    double harmPtAvgFractionRecoMatched;
+    double wHarmPtAvgFractionRecoMatched;
+    double harmWPtAvgFractionRecoMatched;
 
+    double wFractionSim;
+    double ptFractionSim;
+    double wPtFractionSim;
+    double pt2FractionSim;
+    double wPt2FractionSim;
+    double ptFractionSimMatched;
+    double wPtFractionSimMatched;
+    double pt2FractionSimMatched;
+    double wPt2FractionSimMatched;
+
+    // avoid unused variable error with this trick
+    (void)wFractionReco;
+    (void)ptFractionReco;
+    (void)wPtFractionReco;
+    (void)pt2FractionReco;
+    (void)wPt2FractionReco;
+    (void)harmPtFractionReco;
+    (void)wHarmPtFractionReco;
+    (void)harmWPtFractionReco;
+    (void)harmPtAvgFractionReco;
+    (void)wHarmPtAvgFractionReco;
+    (void)harmWPtAvgFractionReco;
+
+    (void)wFractionRecoMatched;
+    (void)ptFractionRecoMatched;
+    (void)wPtFractionRecoMatched;
+    (void)pt2FractionRecoMatched;
+    (void)wPt2FractionRecoMatched;
+    (void)harmPtFractionRecoMatched;
+    (void)wHarmPtFractionRecoMatched;
+    (void)harmWPtFractionRecoMatched;
+    (void)harmPtAvgFractionRecoMatched;
+    (void)wHarmPtAvgFractionRecoMatched;
+    (void)harmWPtAvgFractionRecoMatched;
+
+    (void)wFractionSim;
+    (void)ptFractionSim;
+    (void)wPtFractionSim;
+    (void)pt2FractionSim;
+    (void)wPt2FractionSim;
+    (void)ptFractionSimMatched;
+    (void)wPtFractionSimMatched;
+    (void)pt2FractionSimMatched;
+    (void)wPt2FractionSimMatched;
+    
+    if(doDetailedHistograms_)
+    {
+      std::vector<double> numerators = calculateVertexSharedTracksMomentumFractionNumerators(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_);
+      std::vector<std::vector<double>> denominatorGroups = calculateVertexSharedTracksMomentumFractionDenominators(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_);
+      
+      wFractionReco = numerators[1]/denominatorGroups[0][1];
+      ptFractionReco = numerators[2]/denominatorGroups[0][2];
+      wPtFractionReco = numerators[3]/denominatorGroups[0][3];
+      pt2FractionReco = numerators[4]/denominatorGroups[0][4];
+      wPt2FractionReco = numerators[5]/denominatorGroups[0][5];
+      harmPtFractionReco = numerators[6]/denominatorGroups[0][6];
+      wHarmPtFractionReco = numerators[7]/denominatorGroups[0][7];
+      harmWPtFractionReco = numerators[8]/denominatorGroups[0][8];
+      harmPtAvgFractionReco = numerators[9]/denominatorGroups[0][9];
+      wHarmPtAvgFractionReco = numerators[10]/denominatorGroups[0][10];
+      harmWPtAvgFractionReco = numerators[11]/denominatorGroups[0][11];
+
+      wFractionRecoMatched = numerators[1]/denominatorGroups[1][1];
+      ptFractionRecoMatched = numerators[2]/denominatorGroups[1][2];
+      wPtFractionRecoMatched = numerators[3]/denominatorGroups[1][3];
+      pt2FractionRecoMatched = numerators[4]/denominatorGroups[1][4];
+      wPt2FractionRecoMatched = numerators[5]/denominatorGroups[1][5];
+      harmPtFractionRecoMatched = numerators[6]/denominatorGroups[1][6];
+      wHarmPtFractionRecoMatched = numerators[7]/denominatorGroups[1][7];
+      harmWPtFractionRecoMatched = numerators[8]/denominatorGroups[1][8];
+      harmPtAvgFractionRecoMatched = numerators[9]/denominatorGroups[1][9];
+      wHarmPtAvgFractionRecoMatched = numerators[10]/denominatorGroups[1][10];
+      harmWPtAvgFractionRecoMatched = numerators[11]/denominatorGroups[1][11];
+
+      wFractionSim = numerators[1]/denominatorGroups[2][1];
+      ptFractionSim = numerators[2]/denominatorGroups[2][2];
+      wPtFractionSim = numerators[3]/denominatorGroups[2][3];
+      pt2FractionSim = numerators[4]/denominatorGroups[2][4];
+      wPt2FractionSim = numerators[5]/denominatorGroups[2][5];
+      ptFractionSimMatched = numerators[6]/denominatorGroups[2][6];
+      wPtFractionSimMatched = numerators[7]/denominatorGroups[2][7];
+      pt2FractionSimMatched = numerators[8]/denominatorGroups[2][8];
+      wPt2FractionSimMatched = numerators[9]/denominatorGroups[2][9];
+
+    }
+    
+    
     mes_[label][prefix+"Reco"]->Fill(sharedTracks/v.nRecoTrk);
-    mes_[label][ptPrefix+"WFractionReco"]->Fill(wFractionReco);
-    mes_[label][ptPrefix+"PtFractionReco"]->Fill(ptFractionReco);
-    mes_[label][ptPrefix+"WPtFractionReco"]->Fill(wptFractionReco);
-    mes_[label][ptPrefix+"Pt2FractionReco"]->Fill(pt2FractionReco);
-    mes_[label][ptPrefix+"WPt2FractionReco"]->Fill(wpt2FractionReco);
-    mes_[label][ptPrefix+"HarmPtFractionReco"]->Fill(harmPtFractionReco);
-    mes_[label][ptPrefix+"WHarmPtFractionReco"]->Fill(wHarmPtFractionReco);
-    mes_[label][ptPrefix+"HarmWPtFractionReco"]->Fill(harmWPtFractionReco);
-    mes_[label][ptPrefix+"HarmPtAvgFractionReco"]->Fill(harmPtAvgFractionReco);
-    mes_[label][ptPrefix+"WHarmPtAvgFractionReco"]->Fill(wHarmPtAvgFractionReco);
-    mes_[label][ptPrefix+"HarmWPtAvgFractionReco"]->Fill(harmWPtAvgFractionReco);
-
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"WFractionReco"]->Fill(wFractionReco);
+      mes_[label][ptPrefix+"PtFractionReco"]->Fill(ptFractionReco);
+      mes_[label][ptPrefix+"WPtFractionReco"]->Fill(wPtFractionReco);
+      mes_[label][ptPrefix+"Pt2FractionReco"]->Fill(pt2FractionReco);
+      mes_[label][ptPrefix+"WPt2FractionReco"]->Fill(wPt2FractionReco);
+      mes_[label][ptPrefix+"HarmPtFractionReco"]->Fill(harmPtFractionReco);
+      mes_[label][ptPrefix+"WHarmPtFractionReco"]->Fill(wHarmPtFractionReco);
+      mes_[label][ptPrefix+"HarmWPtFractionReco"]->Fill(harmWPtFractionReco);
+      mes_[label][ptPrefix+"HarmPtAvgFractionReco"]->Fill(harmPtAvgFractionReco);
+      mes_[label][ptPrefix+"WHarmPtAvgFractionReco"]->Fill(wHarmPtAvgFractionReco);
+      mes_[label][ptPrefix+"HarmWPtAvgFractionReco"]->Fill(harmWPtAvgFractionReco);
+    }
+    
     mes_[label][prefix+"RecoMatched"]->Fill(sharedTracks/v.num_matched_sim_tracks);
-    mes_[label][ptPrefix+"WFractionRecoMatched"]->Fill(wFractionRecoMatched);
-    mes_[label][ptPrefix+"PtFractionRecoMatched"]->Fill(ptFractionRecoMatched);
-    mes_[label][ptPrefix+"WPtFractionRecoMatched"]->Fill(wptFractionRecoMatched);
-    mes_[label][ptPrefix+"Pt2FractionRecoMatched"]->Fill(pt2FractionRecoMatched);
-    mes_[label][ptPrefix+"WPt2FractionRecoMatched"]->Fill(wpt2FractionRecoMatched);
-    mes_[label][ptPrefix+"HarmPtFractionRecoMatched"]->Fill(harmPtFractionRecoMatched);
-    mes_[label][ptPrefix+"WHarmPtFractionRecoMatched"]->Fill(wHarmPtFractionRecoMatched);
-    mes_[label][ptPrefix+"HarmWPtFractionRecoMatched"]->Fill(harmWPtFractionRecoMatched);
-    mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched"]->Fill(harmPtAvgFractionRecoMatched);
-    mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched"]->Fill(wHarmPtAvgFractionRecoMatched);
-    mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched"]->Fill(harmWPtAvgFractionRecoMatched);
-
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"WFractionRecoMatched"]->Fill(wFractionRecoMatched);
+      mes_[label][ptPrefix+"PtFractionRecoMatched"]->Fill(ptFractionRecoMatched);
+      mes_[label][ptPrefix+"WPtFractionRecoMatched"]->Fill(wPtFractionRecoMatched);
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched"]->Fill(pt2FractionRecoMatched);
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched"]->Fill(wPt2FractionRecoMatched);
+      mes_[label][ptPrefix+"HarmPtFractionRecoMatched"]->Fill(harmPtFractionRecoMatched);
+      mes_[label][ptPrefix+"WHarmPtFractionRecoMatched"]->Fill(wHarmPtFractionRecoMatched);
+      mes_[label][ptPrefix+"HarmWPtFractionRecoMatched"]->Fill(harmWPtFractionRecoMatched);
+      mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched"]->Fill(harmPtAvgFractionRecoMatched);
+      mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched"]->Fill(wHarmPtAvgFractionRecoMatched);
+      mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched"]->Fill(harmWPtAvgFractionRecoMatched);
+    }
+    
     mes_[label][prefix+"Sim"]->Fill(sharedTracks/simV->nGenTrk);
-    mes_[label][ptPrefix+"PtFractionSim"]->Fill(ptFractionSim);
-    mes_[label][ptPrefix+"WPtFractionSim"]->Fill(wptFractionSim);
-    mes_[label][ptPrefix+"Pt2FractionSim"]->Fill(pt2FractionSim);
-    mes_[label][ptPrefix+"WPt2FractionSim"]->Fill(wpt2FractionSim);
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"WFractionSim"]->Fill(wFractionSim);
+      mes_[label][ptPrefix+"PtFractionSim"]->Fill(ptFractionSim);
+      mes_[label][ptPrefix+"WPtFractionSim"]->Fill(wPtFractionSim);
+      mes_[label][ptPrefix+"Pt2FractionSim"]->Fill(pt2FractionSim);
+      mes_[label][ptPrefix+"WPt2FractionSim"]->Fill(wPt2FractionSim);
+    }
+    
     mes_[label][prefix+"SimMatched"]->Fill(sharedTracks/simV->num_matched_reco_tracks);
-    mes_[label][ptPrefix+"PtFractionSimMatched"]->Fill(ptFractionSimMatched);
-    mes_[label][ptPrefix+"WPtFractionSimMatched"]->Fill(wptFractionSimMatched);
-    mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
-    mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(wpt2FractionSimMatched);
+    
+    if(doDetailedHistograms_)
+    {
+      mes_[label][ptPrefix+"WFractionSimMatched"]->Fill(ptFractionSimMatched);
+      mes_[label][ptPrefix+"PtFractionSimMatched"]->Fill(ptFractionSimMatched);
+      mes_[label][ptPrefix+"WPtFractionSimMatched"]->Fill(wPtFractionSimMatched);
+      mes_[label][ptPrefix+"Pt2FractionSimMatched"]->Fill(pt2FractionSimMatched);
+      mes_[label][ptPrefix+"WPt2FractionSimMatched"]->Fill(wPt2FractionSimMatched);
+    }
+    
+    if(doDetailedHistograms_)
+    {
+      recoFractionValues.push_back(sharedTracks/v.nRecoTrk);
+      wFractionRecoFractionValues.push_back(wFractionReco);
+      ptFractionRecoFractionValues.push_back(ptFractionReco);
+      wPtFractionRecoFractionValues.push_back(wPtFractionReco);
+      pt2FractionRecoFractionValues.push_back(pt2FractionReco);
+      wPt2FractionRecoFractionValues.push_back(wPt2FractionReco);
+      harmPtFractionRecoFractionValues.push_back(harmPtFractionReco);
+      wHarmPtFractionRecoFractionValues.push_back(wHarmPtFractionReco);
+      harmWPtFractionRecoFractionValues.push_back(harmWPtFractionReco);
+      harmPtAvgFractionRecoFractionValues.push_back(harmPtAvgFractionReco);
+      wHarmPtAvgFractionRecoFractionValues.push_back(wHarmPtAvgFractionReco);
+      harmWPtAvgFractionRecoFractionValues.push_back(harmWPtAvgFractionReco);
 
+      recoMatchedFractionValues.push_back(sharedTracks/v.num_matched_sim_tracks);
+      wFractionRecoMatchedFractionValues.push_back(wFractionRecoMatched);
+      ptFractionRecoMatchedFractionValues.push_back(ptFractionRecoMatched);
+      wPtFractionRecoMatchedFractionValues.push_back(wPtFractionRecoMatched);
+      pt2FractionRecoMatchedFractionValues.push_back(pt2FractionRecoMatched);
+      wPt2FractionRecoMatchedFractionValues.push_back(wPt2FractionRecoMatched);
+      harmPtFractionRecoMatchedFractionValues.push_back(harmPtFractionRecoMatched);
+      wHarmPtFractionRecoMatchedFractionValues.push_back(wHarmPtFractionRecoMatched);
+      harmWPtFractionRecoMatchedFractionValues.push_back(harmWPtFractionRecoMatched);
+      harmPtAvgFractionRecoMatchedFractionValues.push_back(harmPtAvgFractionRecoMatched);
+      wHarmPtAvgFractionRecoMatchedFractionValues.push_back(wHarmPtAvgFractionRecoMatched);
+      harmWPtAvgFractionRecoMatchedFractionValues.push_back(harmWPtAvgFractionRecoMatched);
 
-		recoFractionValues.push_back(sharedTracks/v.nRecoTrk);
-		wFractionRecoFractionValues.push_back(wFractionReco);
-		ptFractionRecoFractionValues.push_back(ptFractionReco);
-		wPtFractionRecoFractionValues.push_back(wPtFractionReco);
-		pt2FractionRecoFractionValues.push_back(pt2FractionReco);
-		wPt2FractionRecoFractionValues.push_back(wPt2FractionReco);
-		harmPtFractionRecoFractionValues.push_back(harmPtFractionReco);
-		wHarmPtFractionRecoFractionValues.push_back(wHarmPtFractionReco);
-		harmWPtFractionRecoFractionValues.push_back(harmWPtFractionReco);
-		harmPtAvgFractionRecoFractionValues.push_back(harmPtAvgFractionReco);
-		wHarmPtAvgFractionRecoFractionValues.push_back(wHarmPtAvgFractionReco);
-		harmWPtAvgFractionRecoFractionValues.push_back(harmWPtAvgFractionReco);
-
-		recoMatchedFractionValues.push_back(sharedTracks/v.num_matched_sim_tracks);
-		wFractionRecoMatchedFractionValues.push_back(wFractionRecoMatched);
-		ptFractionRecoMatchedFractionValues.push_back(ptFractionRecoMatched);
-		wPtFractionRecoMatchedFractionValues.push_back(wPtFractionRecoMatched);
-		pt2FractionRecoMatchedFractionValues.push_back(pt2FractionRecoMatched);
-		wPt2FractionRecoMatchedFractionValues.push_back(wPt2FractionRecoMatched);
-		harmPtFractionRecoMatchedFractionValues.push_back(harmPtFractionRecoMatched);
-		wHarmPtFractionRecoMatchedFractionValues.push_back(wHarmPtFractionRecoMatched);
-		harmWPtFractionRecoMatchedFractionValues.push_back(harmWPtFractionRecoMatched);
-		harmPtAvgFractionRecoMatchedFractionValues.push_back(harmPtAvgFractionRecoMatched);
-		wHarmPtAvgFractionRecoMatchedFractionValues.push_back(wHarmPtAvgFractionRecoMatched);
-		harmWPtAvgFractionRecoMatchedFractionValues.push_back(harmWPtAvgFractionRecoMatched);
-
-		simFractionValues.push_back(sharedTracks/simV->nGenTrk);
-		wFractionSimFractionValues.push_back(wFractionSim);
-		ptFractionSimFractionValues.push_back(ptFractionSim);
-		wPtFractionSimFractionValues.push_back(wPtFractionSim);
-		pt2FractionSimFractionValues.push_back(pt2FractionSim);
-		wPt2FractionSimFractionValues.push_back(wPt2FractionSim);
-		simMatchedFractionValues.push_back(sharedTracks/simV->num_matched_reco_tracks);
-		ptFractionSimMatchedFractionValues.push_back(ptFractionSimMatched);
-		wPtFractionSimMatchedFractionValues.push_back(wPtFractionSimMatched);
-		pt2FractionSimMatchedFractionValues.push_back(pt2FractionSimMatched);
-		wPt2FractionSimMatchedFractionValues.push_back(wPt2FractionSimMatched);
-
-
+      simFractionValues.push_back(sharedTracks/simV->nGenTrk);
+      wFractionSimFractionValues.push_back(wFractionSim);
+      ptFractionSimFractionValues.push_back(ptFractionSim);
+      wPtFractionSimFractionValues.push_back(wPtFractionSim);
+      pt2FractionSimFractionValues.push_back(pt2FractionSim);
+      wPt2FractionSimFractionValues.push_back(wPt2FractionSim);
+      simMatchedFractionValues.push_back(sharedTracks/simV->num_matched_reco_tracks);
+      ptFractionSimMatchedFractionValues.push_back(ptFractionSimMatched);
+      wPtFractionSimMatchedFractionValues.push_back(wPtFractionSimMatched);
+      pt2FractionSimMatchedFractionValues.push_back(pt2FractionSimMatched);
+      wPt2FractionSimMatchedFractionValues.push_back(wPt2FractionSimMatched);
+    }
+    
   }
+  
+  // sort the fraction values (at most 3 for each recoVertex, because a recoVertex is connected
+  // to at most three simVertices), then Fill three histograms with the fraction values by order of
+  // magnitude
+  if(doDetailedHistograms_)
+  {
+    std::sort(recoFractionValues.begin(), recoFractionValues.end());
+    std::sort(wFractionRecoFractionValues.begin(), wFractionRecoFractionValues.end());
+    std::sort(ptFractionRecoFractionValues.begin(), ptFractionRecoFractionValues.end());
+    std::sort(wPtFractionRecoFractionValues.begin(), wPtFractionRecoFractionValues.end());
+    std::sort(pt2FractionRecoFractionValues.begin(), pt2FractionRecoFractionValues.end());
+    std::sort(wPt2FractionRecoFractionValues.begin(), wPt2FractionRecoFractionValues.end());
+    std::sort(harmPtFractionRecoFractionValues.begin(), harmPtFractionRecoFractionValues.end());
+    std::sort(wHarmPtFractionRecoFractionValues.begin(), wHarmPtFractionRecoFractionValues.end());
+    std::sort(harmWPtFractionRecoFractionValues.begin(), harmWPtFractionRecoFractionValues.end());
+    std::sort(harmPtAvgFractionRecoFractionValues.begin(), harmPtAvgFractionRecoFractionValues.end());
+    std::sort(wHarmPtAvgFractionRecoFractionValues.begin(), wHarmPtAvgFractionRecoFractionValues.end());
+    std::sort(harmWPtAvgFractionRecoFractionValues.begin(), harmWPtAvgFractionRecoFractionValues.end());
 
-	// sort the fraction values (at most 3 for each recoVertex, because a recoVertex is connected
-	// to at most three simVertices), then Fill three histograms with the fraction values by order of
-	// magnitude
+    std::sort(recoMatchedFractionValues.begin(), recoMatchedFractionValues.end());
+    std::sort(wFractionRecoMatchedFractionValues.begin(), wFractionRecoMatchedFractionValues.end());
+    std::sort(ptFractionRecoMatchedFractionValues.begin(), ptFractionRecoMatchedFractionValues.end());
+    std::sort(wPtFractionRecoMatchedFractionValues.begin(), wPtFractionRecoMatchedFractionValues.end());
+    std::sort(pt2FractionRecoMatchedFractionValues.begin(), pt2FractionRecoMatchedFractionValues.end());
+    std::sort(wPt2FractionRecoMatchedFractionValues.begin(), wPt2FractionRecoMatchedFractionValues.end());
+    std::sort(harmPtFractionRecoMatchedFractionValues.begin(), harmPtFractionRecoMatchedFractionValues.end());
+    std::sort(wHarmPtFractionRecoMatchedFractionValues.begin(), wHarmPtFractionRecoMatchedFractionValues.end());
+    std::sort(harmWPtFractionRecoMatchedFractionValues.begin(), harmWPtFractionRecoMatchedFractionValues.end());
+    std::sort(harmPtAvgFractionRecoMatchedFractionValues.begin(), harmPtAvgFractionRecoMatchedFractionValues.end());
+    std::sort(wHarmPtAvgFractionRecoMatchedFractionValues.begin(), wHarmPtAvgFractionRecoMatchedFractionValues.end());
+    std::sort(harmWPtAvgFractionRecoMatchedFractionValues.begin(), harmWPtAvgFractionRecoMatchedFractionValues.end());
 
-	std::sort(recoFractionValues.begin(), recoFractionValues.end());
-	std::sort(wFractionRecoFractionValues.begin(), wFractionRecoFractionValues.end());
-	std::sort(ptFractionRecoFractionValues.begin(), ptFractionRecoFractionValues.end());
-	std::sort(wPtFractionRecoFractionValues.begin(), wPtFractionRecoFractionValues.end());
-	std::sort(pt2FractionRecoFractionValues.begin(), pt2FractionRecoFractionValues.end());
-	std::sort(wPt2FractionRecoFractionValues.begin(), wPt2FractionRecoFractionValues.end());
-	std::sort(harmPtFractionRecoFractionValues.begin(), harmPtFractionRecoFractionValues.end());
-	std::sort(wHarmPtFractionRecoFractionValues.begin(), wHarmPtFractionRecoFractionValues.end());
-	std::sort(harmWPtFractionRecoFractionValues.begin(), harmWPtFractionRecoFractionValues.end());
-	std::sort(harmPtAvgFractionRecoFractionValues.begin(), harmPtAvgFractionRecoFractionValues.end());
-	std::sort(wHarmPtAvgFractionRecoFractionValues.begin(), wHarmPtAvgFractionRecoFractionValues.end());
-	std::sort(harmWPtAvgFractionRecoFractionValues.begin(), harmWPtAvgFractionRecoFractionValues.end());
-
-	std::sort(recoMatchedFractionValues.begin(), recoMatchedFractionValues.end());
-	std::sort(wFractionRecoMatchedFractionValues.begin(), wFractionRecoMatchedFractionValues.end());
-	std::sort(ptFractionRecoMatchedFractionValues.begin(), ptFractionRecoMatchedFractionValues.end());
-	std::sort(wPtFractionRecoMatchedFractionValues.begin(), wPtFractionRecoMatchedFractionValues.end());
-	std::sort(pt2FractionRecoMatchedFractionValues.begin(), pt2FractionRecoMatchedFractionValues.end());
-	std::sort(wPt2FractionRecoMatchedFractionValues.begin(), wPt2FractionRecoMatchedFractionValues.end());
-	std::sort(harmPtFractionRecoMatchedFractionValues.begin(), harmPtFractionRecoMatchedFractionValues.end());
-	std::sort(wHarmPtFractionRecoMatchedFractionValues.begin(), wHarmPtFractionRecoMatchedFractionValues.end());
-	std::sort(harmWPtFractionRecoMatchedFractionValues.begin(), harmWPtFractionRecoMatchedFractionValues.end());
-	std::sort(harmPtAvgFractionRecoMatchedFractionValues.begin(), harmPtAvgFractionRecoMatchedFractionValues.end());
-	std::sort(wHarmPtAvgFractionRecoMatchedFractionValues.begin(), wHarmPtAvgFractionRecoMatchedFractionValues.end());
-	std::sort(harmWPtAvgFractionRecoMatchedFractionValues.begin(), harmWPtAvgFractionRecoMatchedFractionValues.end());
-
-	std::sort(simFractionValues.begin(), simFractionValues.end());
-	std::sort(wFractionSimFractionValues.begin(), wFractionSimFractionValues.end());
-	std::sort(ptFractionSimFractionValues.begin(), ptFractionSimFractionValues.end());
-	std::sort(wPtFractionSimFractionValues.begin(), wPtFractionSimFractionValues.end());
-	std::sort(pt2FractionSimFractionValues.begin(), pt2FractionSimFractionValues.end());
-	std::sort(wPt2FractionSimFractionValues.begin(), wPt2FractionSimFractionValues.end());
-	std::sort(simMatchedFractionValues.begin(), simMatchedFractionValues.end());
-	std::sort(ptFractionSimMatchedFractionValues.begin(), ptFractionSimMatchedFractionValues.end());
-	std::sort(wPtFractionSimMatchedFractionValues.begin(), wPtFractionSimMatchedFractionValues.end());
-	std::sort(pt2FractionSimMatchedFractionValues.begin(), pt2FractionSimMatchedFractionValues.end());
-	std::sort(wPt2FractionSimMatchedFractionValues.begin(), wPt2FractionSimMatchedFractionValues.end());
+    std::sort(simFractionValues.begin(), simFractionValues.end());
+    std::sort(wFractionSimFractionValues.begin(), wFractionSimFractionValues.end());
+    std::sort(ptFractionSimFractionValues.begin(), ptFractionSimFractionValues.end());
+    std::sort(wPtFractionSimFractionValues.begin(), wPtFractionSimFractionValues.end());
+    std::sort(pt2FractionSimFractionValues.begin(), pt2FractionSimFractionValues.end());
+    std::sort(wPt2FractionSimFractionValues.begin(), wPt2FractionSimFractionValues.end());
+    std::sort(simMatchedFractionValues.begin(), simMatchedFractionValues.end());
+    std::sort(ptFractionSimMatchedFractionValues.begin(), ptFractionSimMatchedFractionValues.end());
+    std::sort(wPtFractionSimMatchedFractionValues.begin(), wPtFractionSimMatchedFractionValues.end());
+    std::sort(pt2FractionSimMatchedFractionValues.begin(), pt2FractionSimMatchedFractionValues.end());
+    std::sort(wPt2FractionSimMatchedFractionValues.begin(), wPt2FractionSimMatchedFractionValues.end());
 
 
-	for(size_t k = 1; k < 4; k++)	{
-	
-		if(recoFractionValues.size() >= k )
-			mes_[label][prefix+"Reco"+"_separated"+k]->Fill(recoFractionValues.pop_back());
-		if(wFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WFractionReco"+"_separated"+k]->Fill(wFractionRecoFractionValues.pop_back());
-		if(ptFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"PtFractionReco"+"_separated"+k]->Fill(ptFractionRecoFractionValues.pop_back());
-		if(wptFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPtFractionReco"+"_separated"+k]->Fill(wptFractionRecoFractionValues.pop_back());
-		if(pt2FractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"Pt2FractionReco"+"_separated"+k]->Fill(pt2FractionRecoFractionValues.pop_back());
-		if(wpt2FractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPt2FractionReco"+"_separated"+k]->Fill(wpt2FractionRecoFractionValues.pop_back());
-		if(harmPtFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmPtFractionReco"+"_separated"+k]->Fill(harmPtFractionRecoFractionValues.pop_back());
-		if(wHarmPtFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WHarmPtFractionReco"+"_separated"+k]->Fill(wHarmPtFractionRecoFractionValues.pop_back());
-		if(harmWPtFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmWPtFractionReco"+"_separated"+k]->Fill(harmWPtFractionRecoFractionValues.pop_back());
-		if(harmPtAvgFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmPtAvgFractionReco"+"_separated"+k]->Fill(harmPtAvgFractionRecoFractionValues.pop_back());
-		if(wHarmPtAvgFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WHarmPtAvgFractionReco"+"_separated"+k]->Fill(wHarmPtAvgFractionRecoFractionValues.pop_back());
-		if(harmWPtAvgFractionRecoFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmWPtAvgFractionReco"+"_separated"+k]->Fill(harmWPtAvgFractionRecoFractionValues.pop_back());
+    // reverse order, so that the biggest fraction is first
 
-		if(recoMatchedFractionValues.size() >= k )
-    	mes_[label][prefix+"RecoMatched"+"_separated"+k]->Fill(recoMatchedFractionValues.pop_back());
-		if(wFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WFractionRecoMatched"+"_separated"+k]->Fill(wFractionRecoMatchedFractionValues.pop_back());
-		if(ptFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"PtFractionRecoMatched"+"_separated"+k]->Fill(ptFractionRecoMatchedFractionValues.pop_back());
-		if(wptFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPtFractionRecoMatched"+"_separated"+k]->Fill(wptFractionRecoMatchedFractionValues.pop_back());
-		if(pt2FractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"Pt2FractionRecoMatched"+"_separated"+k]->Fill(pt2FractionRecoMatchedFractionValues.pop_back());
-		if(wpt2FractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPt2FractionRecoMatched"+"_separated"+k]->Fill(wpt2FractionRecoMatchedFractionValues.pop_back());
-		if(harmPtFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmPtFractionRecoMatched"+"_separated"+k]->Fill(harmPtFractionRecoMatchedFractionValues.pop_back());
-		if(wHarmPtFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WHarmPtFractionRecoMatched"+"_separated"+k]->Fill(wHarmPtFractionRecoMatchedFractionValues.pop_back());
-		if(harmWPtFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmWPtFractionRecoMatched"+"_separated"+k]->Fill(harmWPtFractionRecoMatchedFractionValues.pop_back());
-		if(harmPtAvgFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched"+"_separated"+k]->Fill(harmPtAvgFractionRecoMatchedFractionValues.pop_back());
-		if(wHarmPtAvgFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched"+"_separated"+k]->Fill(wHarmPtAvgFractionRecoMatchedFractionValues.pop_back());
-		if(harmWPtAvgFractionRecoMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched"+"_separated"+k]->Fill(harmWPtAvgFractionRecoMatchedFractionValues.pop_back());
+    std::reverse(recoFractionValues.begin(), recoFractionValues.end());
+    std::reverse(wFractionRecoFractionValues.begin(), wFractionRecoFractionValues.end());
+    std::reverse(ptFractionRecoFractionValues.begin(), ptFractionRecoFractionValues.end());
+    std::reverse(wPtFractionRecoFractionValues.begin(), wPtFractionRecoFractionValues.end());
+    std::reverse(pt2FractionRecoFractionValues.begin(), pt2FractionRecoFractionValues.end());
+    std::reverse(wPt2FractionRecoFractionValues.begin(), wPt2FractionRecoFractionValues.end());
+    std::reverse(harmPtFractionRecoFractionValues.begin(), harmPtFractionRecoFractionValues.end());
+    std::reverse(wHarmPtFractionRecoFractionValues.begin(), wHarmPtFractionRecoFractionValues.end());
+    std::reverse(harmWPtFractionRecoFractionValues.begin(), harmWPtFractionRecoFractionValues.end());
+    std::reverse(harmPtAvgFractionRecoFractionValues.begin(), harmPtAvgFractionRecoFractionValues.end());
+    std::reverse(wHarmPtAvgFractionRecoFractionValues.begin(), wHarmPtAvgFractionRecoFractionValues.end());
+    std::reverse(harmWPtAvgFractionRecoFractionValues.begin(), harmWPtAvgFractionRecoFractionValues.end());
 
-		if(simFractionValues.size() >= k )
-    	mes_[label][prefix+"Sim"+"_separated"+k]->Fill(simFractionValues.pop_back());
-		if(wFractionSimFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WFractionSim"+"_separated"+k]->Fill(wFractionSimFractionValues.pop_back());
-		if(ptFractionSimFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"PtFractionSim"+"_separated"+k]->Fill(ptFractionSimFractionValues.pop_back());
-		if(wptFractionSimFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPtFractionSim"+"_separated"+k]->Fill(wptFractionSimFractionValues.pop_back());
-		if(pt2FractionSimFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"Pt2FractionSim"+"_separated"+k]->Fill(pt2FractionSimFractionValues.pop_back());
-		if(wpt2FractionSimFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPt2FractionSim"+"_separated"+k]->Fill(wpt2FractionSimFractionValues.pop_back());
-		if(simMatchedFractionValues.size() >= k )
-    	mes_[label][prefix+"SimMatched"+"_separated"+k]->Fill(simMatchedFractionValues.pop_back());
-		if(ptFractionSimMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"PtFractionSimMatched"+"_separated"+k]->Fill(ptFractionSimMatched);
-		if(wptFractionSimMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPtFractionSimMatched"+"_separated"+k]->Fill(wptFractionSimMatched);
-		if(pt2FractionSimMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"Pt2FractionSimMatched"+"_separated"+k]->Fill(pt2FractionSimMatched);
-		if(wpt2FractionSimMatchedFractionValues.size() >= k )
-    	mes_[label][ptPrefix+"WPt2FractionSimMatched"+"_separated"+k]->Fill(wpt2FractionSimMatched);
-	}
+    std::reverse(recoMatchedFractionValues.begin(), recoMatchedFractionValues.end());
+    std::reverse(wFractionRecoMatchedFractionValues.begin(), wFractionRecoMatchedFractionValues.end());
+    std::reverse(ptFractionRecoMatchedFractionValues.begin(), ptFractionRecoMatchedFractionValues.end());
+    std::reverse(wPtFractionRecoMatchedFractionValues.begin(), wPtFractionRecoMatchedFractionValues.end());
+    std::reverse(pt2FractionRecoMatchedFractionValues.begin(), pt2FractionRecoMatchedFractionValues.end());
+    std::reverse(wPt2FractionRecoMatchedFractionValues.begin(), wPt2FractionRecoMatchedFractionValues.end());
+    std::reverse(harmPtFractionRecoMatchedFractionValues.begin(), harmPtFractionRecoMatchedFractionValues.end());
+    std::reverse(wHarmPtFractionRecoMatchedFractionValues.begin(), wHarmPtFractionRecoMatchedFractionValues.end());
+    std::reverse(harmWPtFractionRecoMatchedFractionValues.begin(), harmWPtFractionRecoMatchedFractionValues.end());
+    std::reverse(harmPtAvgFractionRecoMatchedFractionValues.begin(), harmPtAvgFractionRecoMatchedFractionValues.end());
+    std::reverse(wHarmPtAvgFractionRecoMatchedFractionValues.begin(), wHarmPtAvgFractionRecoMatchedFractionValues.end());
+    std::reverse(harmWPtAvgFractionRecoMatchedFractionValues.begin(), harmWPtAvgFractionRecoMatchedFractionValues.end());
+
+    std::reverse(simFractionValues.begin(), simFractionValues.end());
+    std::reverse(wFractionSimFractionValues.begin(), wFractionSimFractionValues.end());
+    std::reverse(ptFractionSimFractionValues.begin(), ptFractionSimFractionValues.end());
+    std::reverse(wPtFractionSimFractionValues.begin(), wPtFractionSimFractionValues.end());
+    std::reverse(pt2FractionSimFractionValues.begin(), pt2FractionSimFractionValues.end());
+    std::reverse(wPt2FractionSimFractionValues.begin(), wPt2FractionSimFractionValues.end());
+    std::reverse(simMatchedFractionValues.begin(), simMatchedFractionValues.end());
+    std::reverse(ptFractionSimMatchedFractionValues.begin(), ptFractionSimMatchedFractionValues.end());
+    std::reverse(wPtFractionSimMatchedFractionValues.begin(), wPtFractionSimMatchedFractionValues.end());
+    std::reverse(pt2FractionSimMatchedFractionValues.begin(), pt2FractionSimMatchedFractionValues.end());
+    std::reverse(wPt2FractionSimMatchedFractionValues.begin(), wPt2FractionSimMatchedFractionValues.end());
+
+
+    // Filling values 1
+
+    if(recoFractionValues.size() >= 1 )
+      mes_[label][prefix+"Reco_separated1"]->Fill(recoFractionValues.at(0));
+    if(wFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WFractionReco_separated1"]->Fill(wFractionRecoFractionValues.at(0));
+    if(ptFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionReco_separated1"]->Fill(ptFractionRecoFractionValues.at(0));
+    if(wPtFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPtFractionReco_separated1"]->Fill(wPtFractionRecoFractionValues.at(0));
+    if(pt2FractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionReco_separated1"]->Fill(pt2FractionRecoFractionValues.at(0));
+    if(wPt2FractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPt2FractionReco_separated1"]->Fill(wPt2FractionRecoFractionValues.at(0));
+    if(harmPtFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmPtFractionReco_separated1"]->Fill(harmPtFractionRecoFractionValues.at(0));
+    if(wHarmPtFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WHarmPtFractionReco_separated1"]->Fill(wHarmPtFractionRecoFractionValues.at(0));
+    if(harmWPtFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmWPtFractionReco_separated1"]->Fill(harmWPtFractionRecoFractionValues.at(0));
+    if(harmPtAvgFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmPtAvgFractionReco_separated1"]->Fill(harmPtAvgFractionRecoFractionValues.at(0));
+    if(wHarmPtAvgFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WHarmPtAvgFractionReco_separated1"]->Fill(wHarmPtAvgFractionRecoFractionValues.at(0));
+    if(harmWPtAvgFractionRecoFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmWPtAvgFractionReco_separated1"]->Fill(harmWPtAvgFractionRecoFractionValues.at(0));
+
+    if(recoMatchedFractionValues.size() >= 1 )
+      mes_[label][prefix+"RecoMatched_separated1"]->Fill(recoMatchedFractionValues.at(0));
+    if(wFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WFractionRecoMatched_separated1"]->Fill(wFractionRecoMatchedFractionValues.at(0));
+    if(ptFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionRecoMatched_separated1"]->Fill(ptFractionRecoMatchedFractionValues.at(0));
+    if(wPtFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPtFractionRecoMatched_separated1"]->Fill(wPtFractionRecoMatchedFractionValues.at(0));
+    if(pt2FractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched_separated1"]->Fill(pt2FractionRecoMatchedFractionValues.at(0));
+    if(wPt2FractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched_separated1"]->Fill(wPt2FractionRecoMatchedFractionValues.at(0));
+    if(harmPtFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmPtFractionRecoMatched_separated1"]->Fill(harmPtFractionRecoMatchedFractionValues.at(0));
+    if(wHarmPtFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WHarmPtFractionRecoMatched_separated1"]->Fill(wHarmPtFractionRecoMatchedFractionValues.at(0));
+    if(harmWPtFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmWPtFractionRecoMatched_separated1"]->Fill(harmWPtFractionRecoMatchedFractionValues.at(0));
+    if(harmPtAvgFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched_separated1"]->Fill(harmPtAvgFractionRecoMatchedFractionValues.at(0));
+    if(wHarmPtAvgFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched_separated1"]->Fill(wHarmPtAvgFractionRecoMatchedFractionValues.at(0));
+    if(harmWPtAvgFractionRecoMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched_separated1"]->Fill(harmWPtAvgFractionRecoMatchedFractionValues.at(0));
+
+    
+    if(simFractionValues.size() >= 1 )
+      mes_[label][prefix+"Sim_separated1"]->Fill(simFractionValues.at(0));
+    if(wFractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WFractionSim_separated1"]->Fill(wFractionSimFractionValues.at(0));
+    if(ptFractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionSim_separated1"]->Fill(ptFractionSimFractionValues.at(0));
+    if(wPtFractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPtFractionSim_separated1"]->Fill(wPtFractionSimFractionValues.at(0));
+    if(pt2FractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionSim_separated1"]->Fill(pt2FractionSimFractionValues.at(0));
+    if(wPt2FractionSimFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPt2FractionSim_separated1"]->Fill(wPt2FractionSimFractionValues.at(0));
+    if(simMatchedFractionValues.size() >= 1 )
+      mes_[label][prefix+"SimMatched_separated1"]->Fill(simMatchedFractionValues.at(0));
+    if(ptFractionSimMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"PtFractionSimMatched_separated1"]->Fill(ptFractionSimMatchedFractionValues.at(0));
+    if(wPtFractionSimMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPtFractionSimMatched_separated1"]->Fill(wPtFractionSimMatchedFractionValues.at(0));
+    if(pt2FractionSimMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"Pt2FractionSimMatched_separated1"]->Fill(pt2FractionSimMatchedFractionValues.at(0));
+    if(wPt2FractionSimMatchedFractionValues.size() >= 1 )
+      mes_[label][ptPrefix+"WPt2FractionSimMatched_separated1"]->Fill(wPt2FractionSimMatchedFractionValues.at(0));
+
+
+    // Filling values 2
+
+    if(recoFractionValues.size() >= 2 )
+      mes_[label][prefix+"Reco_separated2"]->Fill(recoFractionValues.at(1));
+    if(wFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WFractionReco_separated2"]->Fill(wFractionRecoFractionValues.at(1));
+    if(ptFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionReco_separated2"]->Fill(ptFractionRecoFractionValues.at(1));
+    if(wPtFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPtFractionReco_separated2"]->Fill(wPtFractionRecoFractionValues.at(1));
+    if(pt2FractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionReco_separated2"]->Fill(pt2FractionRecoFractionValues.at(1));
+    if(wPt2FractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPt2FractionReco_separated2"]->Fill(wPt2FractionRecoFractionValues.at(1));
+    if(harmPtFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmPtFractionReco_separated2"]->Fill(harmPtFractionRecoFractionValues.at(1));
+    if(wHarmPtFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WHarmPtFractionReco_separated2"]->Fill(wHarmPtFractionRecoFractionValues.at(1));
+    if(harmWPtFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmWPtFractionReco_separated2"]->Fill(harmWPtFractionRecoFractionValues.at(1));
+    if(harmPtAvgFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmPtAvgFractionReco_separated2"]->Fill(harmPtAvgFractionRecoFractionValues.at(1));
+    if(wHarmPtAvgFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WHarmPtAvgFractionReco_separated2"]->Fill(wHarmPtAvgFractionRecoFractionValues.at(1));
+    if(harmWPtAvgFractionRecoFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmWPtAvgFractionReco_separated2"]->Fill(harmWPtAvgFractionRecoFractionValues.at(1));
+
+    if(recoMatchedFractionValues.size() >= 2 )
+      mes_[label][prefix+"RecoMatched_separated2"]->Fill(recoMatchedFractionValues.at(1));
+    if(wFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WFractionRecoMatched_separated2"]->Fill(wFractionRecoMatchedFractionValues.at(1));
+    if(ptFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionRecoMatched_separated2"]->Fill(ptFractionRecoMatchedFractionValues.at(1));
+    if(wPtFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPtFractionRecoMatched_separated2"]->Fill(wPtFractionRecoMatchedFractionValues.at(1));
+    if(pt2FractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched_separated2"]->Fill(pt2FractionRecoMatchedFractionValues.at(1));
+    if(wPt2FractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched_separated2"]->Fill(wPt2FractionRecoMatchedFractionValues.at(1));
+    if(harmPtFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmPtFractionRecoMatched_separated2"]->Fill(harmPtFractionRecoMatchedFractionValues.at(1));
+    if(wHarmPtFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WHarmPtFractionRecoMatched_separated2"]->Fill(wHarmPtFractionRecoMatchedFractionValues.at(1));
+    if(harmWPtFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmWPtFractionRecoMatched_separated2"]->Fill(harmWPtFractionRecoMatchedFractionValues.at(1));
+    if(harmPtAvgFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched_separated2"]->Fill(harmPtAvgFractionRecoMatchedFractionValues.at(1));
+    if(wHarmPtAvgFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched_separated2"]->Fill(wHarmPtAvgFractionRecoMatchedFractionValues.at(1));
+    if(harmWPtAvgFractionRecoMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched_separated2"]->Fill(harmWPtAvgFractionRecoMatchedFractionValues.at(1));
+
+    if(simFractionValues.size() >= 2 )
+      mes_[label][prefix+"Sim_separated2"]->Fill(simFractionValues.at(1));
+    if(wFractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WFractionSim_separated2"]->Fill(wFractionSimFractionValues.at(1));
+    if(ptFractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionSim_separated2"]->Fill(ptFractionSimFractionValues.at(1));
+    if(wPtFractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPtFractionSim_separated2"]->Fill(wPtFractionSimFractionValues.at(1));
+    if(pt2FractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionSim_separated2"]->Fill(pt2FractionSimFractionValues.at(1));
+    if(wPt2FractionSimFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPt2FractionSim_separated2"]->Fill(wPt2FractionSimFractionValues.at(1));
+    if(simMatchedFractionValues.size() >= 2 )
+      mes_[label][prefix+"SimMatched_separated2"]->Fill(simMatchedFractionValues.at(1));
+    if(ptFractionSimMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"PtFractionSimMatched_separated2"]->Fill(ptFractionSimMatchedFractionValues.at(1));
+    if(wPtFractionSimMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPtFractionSimMatched_separated2"]->Fill(wPtFractionSimMatchedFractionValues.at(1));
+    if(pt2FractionSimMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"Pt2FractionSimMatched_separated2"]->Fill(pt2FractionSimMatchedFractionValues.at(1));
+    if(wPt2FractionSimMatchedFractionValues.size() >= 2 )
+      mes_[label][ptPrefix+"WPt2FractionSimMatched_separated2"]->Fill(wPt2FractionSimMatchedFractionValues.at(1));
+
+
+
+    // Filling values 3
+
+
+    if(recoFractionValues.size() >= 3 )
+      mes_[label][prefix+"Reco_separated3"]->Fill(recoFractionValues.at(2));
+    if(wFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WFractionReco_separated3"]->Fill(wFractionRecoFractionValues.at(2));
+    if(ptFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionReco_separated3"]->Fill(ptFractionRecoFractionValues.at(2));
+    if(wPtFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPtFractionReco_separated3"]->Fill(wPtFractionRecoFractionValues.at(2));
+    if(pt2FractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionReco_separated3"]->Fill(pt2FractionRecoFractionValues.at(2));
+    if(wPt2FractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPt2FractionReco_separated3"]->Fill(wPt2FractionRecoFractionValues.at(2));
+    if(harmPtFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmPtFractionReco_separated3"]->Fill(harmPtFractionRecoFractionValues.at(2));
+    if(wHarmPtFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WHarmPtFractionReco_separated3"]->Fill(wHarmPtFractionRecoFractionValues.at(2));
+    if(harmWPtFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmWPtFractionReco_separated3"]->Fill(harmWPtFractionRecoFractionValues.at(2));
+    if(harmPtAvgFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmPtAvgFractionReco_separated3"]->Fill(harmPtAvgFractionRecoFractionValues.at(2));
+    if(wHarmPtAvgFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WHarmPtAvgFractionReco_separated3"]->Fill(wHarmPtAvgFractionRecoFractionValues.at(2));
+    if(harmWPtAvgFractionRecoFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmWPtAvgFractionReco_separated3"]->Fill(harmWPtAvgFractionRecoFractionValues.at(2));
+
+    if(recoMatchedFractionValues.size() >= 3 )
+      mes_[label][prefix+"RecoMatched_separated3"]->Fill(recoMatchedFractionValues.at(2));
+    if(wFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WFractionRecoMatched_separated3"]->Fill(wFractionRecoMatchedFractionValues.at(2));
+    if(ptFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionRecoMatched_separated3"]->Fill(ptFractionRecoMatchedFractionValues.at(2));
+    if(wPtFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPtFractionRecoMatched_separated3"]->Fill(wPtFractionRecoMatchedFractionValues.at(2));
+    if(pt2FractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionRecoMatched_separated3"]->Fill(pt2FractionRecoMatchedFractionValues.at(2));
+    if(wPt2FractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPt2FractionRecoMatched_separated3"]->Fill(wPt2FractionRecoMatchedFractionValues.at(2));
+    if(harmPtFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmPtFractionRecoMatched_separated3"]->Fill(harmPtFractionRecoMatchedFractionValues.at(2));
+    if(wHarmPtFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WHarmPtFractionRecoMatched_separated3"]->Fill(wHarmPtFractionRecoMatchedFractionValues.at(2));
+    if(harmWPtFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmWPtFractionRecoMatched_separated3"]->Fill(harmWPtFractionRecoMatchedFractionValues.at(2));
+    if(harmPtAvgFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmPtAvgFractionRecoMatched_separated3"]->Fill(harmPtAvgFractionRecoMatchedFractionValues.at(2));
+    if(wHarmPtAvgFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WHarmPtAvgFractionRecoMatched_separated3"]->Fill(wHarmPtAvgFractionRecoMatchedFractionValues.at(2));
+    if(harmWPtAvgFractionRecoMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"HarmWPtAvgFractionRecoMatched_separated3"]->Fill(harmWPtAvgFractionRecoMatchedFractionValues.at(2));
+
+    if(simFractionValues.size() >= 3 )
+      mes_[label][prefix+"Sim_separated3"]->Fill(simFractionValues.at(2));
+    if(wFractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WFractionSim_separated3"]->Fill(wFractionSimFractionValues.at(2));
+    if(ptFractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionSim_separated3"]->Fill(ptFractionSimFractionValues.at(2));
+    if(wPtFractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPtFractionSim_separated3"]->Fill(wPtFractionSimFractionValues.at(2));
+    if(pt2FractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionSim_separated3"]->Fill(pt2FractionSimFractionValues.at(2));
+    if(wPt2FractionSimFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPt2FractionSim_separated3"]->Fill(wPt2FractionSimFractionValues.at(2));
+    if(simMatchedFractionValues.size() >= 3 )
+      mes_[label][prefix+"SimMatched_separated3"]->Fill(simMatchedFractionValues.at(2));
+    if(ptFractionSimMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"PtFractionSimMatched_separated3"]->Fill(ptFractionSimMatchedFractionValues.at(2));
+    if(wPtFractionSimMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPtFractionSimMatched_separated3"]->Fill(wPtFractionSimMatchedFractionValues.at(2));
+    if(pt2FractionSimMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"Pt2FractionSimMatched_separated3"]->Fill(pt2FractionSimMatchedFractionValues.at(2));
+    if(wPt2FractionSimMatchedFractionValues.size() >= 3 )
+      mes_[label][ptPrefix+"WPt2FractionSimMatched_separated3"]->Fill(wPt2FractionSimMatchedFractionValues.at(2));
+  }
+  
 
 }
 

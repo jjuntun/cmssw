@@ -28,10 +28,11 @@ private:
   const double sigmaZ_;
   const double maxRecoZ_;
   const double sharedTrackFraction_;
+  const bool doDetailedHistograms_;
 
   edm::EDGetTokenT<reco::RecoToSimCollection> trackRecoToSimAssociationToken_;
   edm::EDGetTokenT<reco::SimToRecoCollection> trackSimToRecoAssociationToken_;
-	const std::string associationMode_;
+  const std::string associationMode_;
 };
 
 VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracksProducer(const edm::ParameterSet& config):
@@ -39,10 +40,10 @@ VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracks
   sigmaZ_(config.getParameter<double>("sigmaZ")),
   maxRecoZ_(config.getParameter<double>("maxRecoZ")),
   sharedTrackFraction_(config.getParameter<double>("sharedTrackFraction")),
+  doDetailedHistograms_(config.getParameter<bool>("doDetailedHistograms")),
   trackRecoToSimAssociationToken_(consumes<reco::RecoToSimCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
   trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
 	associationMode_(config.getParameter<std::string>("associationMode"))
-
 {
   produces<reco::VertexToTrackingVertexAssociator>();
 }
@@ -57,11 +58,11 @@ void VertexAssociatorByPositionAndTracksProducer::fillDescriptions(edm::Configur
   desc.add<double>("sigmaZ", 3.0);
   desc.add<double>("maxRecoZ", 1000.0);
   desc.add<double>("sharedTrackFraction", -1.0);
+  desc.add<bool>("doDetailedHistograms", false);
 
   // Track-TrackingParticle association
   desc.add<edm::InputTag>("trackAssociation", edm::InputTag("trackingParticleRecoTrackAsssociation"));
-
-	desc.add<std::string>("associationMode", "Pt2");
+  desc.add<std::string>("associationMode", "");
 
   descriptions.add("VertexAssociatorByPositionAndTracks", desc);
 }
@@ -80,7 +81,7 @@ void VertexAssociatorByPositionAndTracksProducer::produce(edm::StreamID, edm::Ev
                                                                     sharedTrackFraction_,
                                                                     recotosimCollectionH.product(),
                                                                     simtorecoCollectionH.product(),
-																																		associationMode_);
+                                                                    associationMode_);
 
   auto toPut = std::make_unique<reco::VertexToTrackingVertexAssociator>(std::move(impl));
   iEvent.put(std::move(toPut));
