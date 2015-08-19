@@ -3,6 +3,7 @@
 
 #include "SimDataFormats/Associations/interface/VertexToTrackingVertexAssociatorBaseImpl.h"
 #include "DataFormats/RecoCandidate/interface/TrackAssociation.h"
+#include "SimTracker/VertexAssociation/interface/calculateVertexSharedTracks.h"
 
 /**
  * This class associates reco::Vertices and TrackingVertices by their
@@ -14,66 +15,17 @@
  * sorted by it in descending order.
  */
 
-/*
-namespace vertexAssociation {
-  enum class AssociationType { NumberOfTracks, W, Pt, WPt, Pt2, WPt2, HarmPt, WHarmPt, HarmWPt, HarmPtAvg, WHarmPtAvg, HarmWPtAvg };
-  
-  enum class DividerType { Rreco, RrecoMatched, Sim, SimMatched };
-
-}
-*/
-
-namespace vertexAssociation {
-  enum class AssociationType;
-}
-
-namespace vertexAssociation {
-  enum class AssociationType { NumberOfTracks, W, Pt, WPt, Pt2, WPt2, HarmPt, WHarmPt, HarmWPt, HarmPtAvg, WHarmPtAvg, HarmWPtAvg };
-  
-  enum class DividerType { Reco, RecoMatched, Sim, SimMatched };
-
-  AssociationType getAssociationType(std::string s)
-  {
-    if(s.compare("") == 0)
-      return AssociationType::NumberOfTracks;
-    else if(s.compare("W") == 0)
-      return AssociationType::W;
-    else if(s.compare("Pt") == 0)
-      return AssociationType::Pt;
-    else if(s.compare("WPt") == 0)
-      return AssociationType::WPt;
-    else if(s.compare("Pt2") == 0)
-      return AssociationType::Pt2;
-    else if(s.compare("WPt2") == 0)
-      return AssociationType::WPt2;
-    else if(s.compare("HarmPt") == 0)
-      return AssociationType::HarmPt;
-    else if(s.compare("WHarmPt") == 0)
-      return AssociationType::WHarmPt;
-    else if(s.compare("HarmWPt") == 0)
-      return AssociationType::HarmWPt;
-    else if(s.compare("HarmPtAvg") == 0)
-      return AssociationType::HarmPtAvg;
-    else if(s.compare("WHarmPtAvg") == 0)
-      return AssociationType::WHarmPtAvg;
-    else if(s.compare("HarmWPtAvg") == 0)
-      return AssociationType::HarmWPtAvg;
-
-    return AssociationType::NumberOfTracks;
-  }
-
-}
-
 class VertexAssociatorByPositionAndTracks : public reco::VertexToTrackingVertexAssociatorBaseImpl {
 public:
   VertexAssociatorByPositionAndTracks(const edm::EDProductGetter *productGetter,
                                       double absZ,
                                       double sigmaZ,
                                       double maxRecoZ,
-                                      double sharedTrackFraction,
+                                      double sharedFraction,
                                       const reco::RecoToSimCollection *trackRecoToSimAssociation,
                                       const reco::SimToRecoCollection *trackSimToRecoAssociation,
-																			const std::string& associationMode);
+                                      const vertexAssociation::AssociationTypeStringToEnum associationType,
+                                      const vertexAssociation::DividerType dividerType);
 
   virtual ~VertexAssociatorByPositionAndTracks();
 
@@ -91,12 +43,13 @@ private:
   const double absZ_;
   const double sigmaZ_;
   const double maxRecoZ_;
-  const double sharedTrackFraction_;
+  const double sharedFraction_;
 
   const reco::RecoToSimCollection *trackRecoToSimAssociation_;
   const reco::SimToRecoCollection *trackSimToRecoAssociation_;
 
-  vertexAssociation::AssociationType associationType_;
+  vertexAssociation::AssociationTypeStringToEnum associationType_;
+  vertexAssociation::DividerType dividerType_;
 
 
 };
