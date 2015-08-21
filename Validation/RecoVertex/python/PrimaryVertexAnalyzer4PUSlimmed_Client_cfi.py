@@ -62,6 +62,4 @@ postProcessorVertex = cms.EDAnalyzer("DQMGenericClient",
                                      verbose = cms.untracked.uint32(5)
 )
 
-
-
 postProcessorVertexStandAlone = cms.Sequence(postProcessorVertex)

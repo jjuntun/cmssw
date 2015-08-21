@@ -9,6 +9,9 @@ selectedOfflinePrimaryVertices = cms.EDFilter("VertexSelector",
 selectedOfflinePrimaryVerticesWithBS = selectedOfflinePrimaryVertices.clone()
 selectedOfflinePrimaryVerticesWithBS.src = cms.InputTag('offlinePrimaryVerticesWithBS')
 
+#selectedPixelVertices = selectedOfflinePrimaryVertices.clone()
+#selectedPixelVertices.src = cms.InputTag('pixelVertices')
+
 vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
                                 use_only_charged_tracks = cms.untracked.bool(True),
                                 verbose = cms.untracked.bool(False),
@@ -29,8 +32,6 @@ vertexAnalysis = cms.EDAnalyzer("PrimaryVertexAnalyzer4PUSlimmed",
 #                                                                      "selectedPixelVertices"
                                 ),
 )
-
-
 
 vertexAnalysisSequence = cms.Sequence(cms.ignore(selectedOfflinePrimaryVertices)
                                       * cms.ignore(selectedOfflinePrimaryVerticesWithBS)

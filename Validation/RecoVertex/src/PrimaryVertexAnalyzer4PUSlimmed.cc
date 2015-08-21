@@ -25,12 +25,12 @@
 // used for repetitive booking of histograms
 #include <string>
 
-namespace vertexAssociation
+namespace
 {
   struct FractionSeparation
   {
 
-    std::string fractionNames[4][12] = { 
+    const std::string fractionNames[static_cast<int>(vertexAssociation::DividerType::Size)][static_cast<int>(vertexAssociation::AssociationType::Size)] = { 
                                   { "FractionReco", "WFractionReco", "PtFractionReco","WPtFractionReco",
                                     "Pt2FractionReco", "WPt2FractionReco", "HarmPtFractionReco", 
                                     "WHarmPtFractionReco", "HarmWPtFractionReco", "HarmPtAvgFractionReco",
@@ -45,57 +45,131 @@ namespace vertexAssociation
                                     "Pt2FractionSim"}, 
                                   { "FractionSimMatched", "WFractionSimMatched", "PtFractionSimMatched", 
                                     "WPtFractionSimMatched","Pt2FractionSimMatched", "WPt2FractionSimMatched"} };
-    double fractionValues[4][12];
-    double separatedFractionValues[4][12][3] = { { { 0 } } };
+    double fractionValues[static_cast<int>(vertexAssociation::DividerType::Size)][static_cast<int>(vertexAssociation::AssociationType::Size)];
+    double separatedFractionValues[static_cast<int>(vertexAssociation::DividerType::Size)][static_cast<int>(vertexAssociation::AssociationType::Size)][3] = { { { 0 } } };
 
-    void set(double value, AssociationTypeStringToEnum associationType, DividerType dividerType)
+
+    void set(vertexAssociation::TrackFraction trackFractionArray[static_cast<int>(vertexAssociation::DividerType::Size)], std::map<std::string, std::map<std::string, MonitorElement*> > mes_, std::string label, std::string ptPrefix)
     {
-      fractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)] = value;
-      if( separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][0] == 0 )
-        separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][0] = value;
-      else if( separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][1] == 0 )
+            // loop through different association types and fill
+      for(  int enumLoopInt = static_cast<int>(vertexAssociation::AssociationType::Weighted);
+            enumLoopInt != static_cast<int>(vertexAssociation::AssociationType::Size);
+            enumLoopInt++ )
+      {
+        vertexAssociation::AssociationType associationType = static_cast<vertexAssociation::AssociationType>(enumLoopInt);
+
+        // loop through denominator types Reco, RecoMatched, Sim and SimMatched
+        for( int j = 0; j < static_cast<int>(vertexAssociation::DividerType::Size); j++)
+        {
+          vertexAssociation::DividerType dividerType = static_cast<vertexAssociation::DividerType>(j);
+          setValue(trackFractionArray[j].getFraction(associationType),associationType,dividerType);
+          fill(mes_[label], dividerType, associationType, ptPrefix);
+        }
+      }
+
+    }
+
+    void setValue(double value, vertexAssociation::AssociationType associationType, vertexAssociation::DividerType dividerType)
+    {
+      int dividerTypeIndex = static_cast<int>(dividerType);
+      int associationTypeIndex = static_cast<int>(associationType);
+      fractionValues[dividerTypeIndex][associationTypeIndex] = value;
+      if( separatedFractionValues[dividerTypeIndex][associationTypeIndex][0] == 0 )
+        separatedFractionValues[dividerTypeIndex][associationTypeIndex][0] = value;
+      else if( separatedFractionValues[dividerTypeIndex][associationTypeIndex][1] == 0 )
       {
         // sort and add
-        int temp = separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][0];
+        int temp = separatedFractionValues[dividerTypeIndex][associationTypeIndex][0];
         if( value > temp )
         {
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][0] = value;
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][1] = temp;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][0] = value;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][1] = temp;
         }
         else
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][1] = value;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][1] = value;
       }
       else
       {
         //sort and add
-        int temp = separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][0];
-        int temp2 = separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][1];
+        int temp = separatedFractionValues[dividerTypeIndex][associationTypeIndex][0];
+        int temp2 = separatedFractionValues[dividerTypeIndex][associationTypeIndex][1];
         if( value > temp )
         {
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][0] = value;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][0] = value;
           // temp and temp2 are ordered
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][1] = temp;
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][2] = temp2;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][1] = temp;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][2] = temp2;
         }
         else if( value > temp2 )
         {
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][1] = value;
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][2] = temp2;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][1] = value;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][2] = temp2;
 
         }
         else
-          separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][2] = value;
+          separatedFractionValues[dividerTypeIndex][associationTypeIndex][2] = value;
       }
     }
 
-    double get(AssociationTypeStringToEnum associationType, DividerType dividerType)
+    double get(vertexAssociation::AssociationType associationType, vertexAssociation::DividerType dividerType)
     {
-      return fractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)];
+      int dividerTypeIndex = static_cast<int>(dividerType);
+      int associationTypeIndex = static_cast<int>(associationType);
+      return fractionValues[dividerTypeIndex][associationTypeIndex];
     }
 
-    double getSeparatedValue(AssociationTypeStringToEnum associationType, DividerType dividerType, int order)
+    double getSeparatedValue(vertexAssociation::AssociationType associationType, vertexAssociation::DividerType dividerType, int order)
     {
-      return separatedFractionValues[static_cast<int>(dividerType)][static_cast<int>(associationType)][order];
+      int dividerTypeIndex = static_cast<int>(dividerType);
+      int associationTypeIndex = static_cast<int>(associationType);
+      return separatedFractionValues[dividerTypeIndex][associationTypeIndex][order];
+    }
+
+
+    void fill(std::map<std::string, MonitorElement*>& mes_label, vertexAssociation::DividerType dividerType, vertexAssociation::AssociationType associationType, std::string ptPrefix)
+    {
+      if( dividerType == vertexAssociation::DividerType::Sim || 
+      dividerType == vertexAssociation::DividerType::SimMatched )
+      {
+        if( associationType == vertexAssociation::AssociationType::Pt ||
+            associationType == vertexAssociation::AssociationType::Pt2 )
+        {
+          mes_label[std::string(ptPrefix+fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]).c_str()]->Fill(get(associationType,dividerType));
+
+          // separated plots
+          if( associationType == vertexAssociation::AssociationType::Weighted)
+          {
+            for( int k = 1; k < 4; k++ )
+            {
+              mes_label[std::string(ptPrefix+fractionNames[static_cast<int>(dividerType)][static_cast<int>(vertexAssociation::AssociationType::NumberOfTracks)]+"_separated"+std::to_string(k)).c_str()]->Fill(getSeparatedValue(associationType,dividerType, k-1));
+            }
+          }
+          for( int k = 1; k < 4; k++ )
+          {
+            mes_label[std::string(ptPrefix+fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]+"_separated"+std::to_string(k)).c_str()]->Fill(getSeparatedValue(associationType,dividerType, k-1));
+
+          }
+
+        }
+        else
+          return;
+      }
+      else
+      {
+        mes_label[std::string(ptPrefix+fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]).c_str()]->Fill(get(associationType,dividerType));
+        
+        // separated plots
+        if( associationType == vertexAssociation::AssociationType::Weighted)
+        {
+          for( int k = 1; k < 4; k++ )
+            mes_label[std::string(ptPrefix+fractionNames[static_cast<int>(dividerType)][static_cast<int>(vertexAssociation::AssociationType::NumberOfTracks)]+"_separated"+std::to_string(k)).c_str()]->Fill(getSeparatedValue(associationType,dividerType, k-1));
+           
+        }
+
+        for( int k = 1; k < 4; k++ )
+          mes_label[std::string(ptPrefix+fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]+"_separated"+std::to_string(k)).c_str()]->Fill(getSeparatedValue(associationType,dividerType, k-1));
+        
+      }
     }
 
   };
@@ -765,34 +839,6 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
     ptPrefix = "GenAllAssoc2RecoMultiMatched_SharedTrack";
   }
 
-
-  //simVertex-recoVertex fraction values
-
-  std::vector<double> recoFractionValues;
-  std::vector<double> wFractionRecoFractionValues;
-  std::vector<double> ptFractionRecoFractionValues;
-  std::vector<double> wPtFractionRecoFractionValues;
-  std::vector<double> pt2FractionRecoFractionValues;
-  std::vector<double> wPt2FractionRecoFractionValues;
-
-
-  std::vector<double> recoMatchedFractionValues;
-  std::vector<double> wFractionRecoMatchedFractionValues;
-  std::vector<double> ptFractionRecoMatchedFractionValues;
-  std::vector<double> wPtFractionRecoMatchedFractionValues;
-  std::vector<double> pt2FractionRecoMatchedFractionValues;
-  std::vector<double> wPt2FractionRecoMatchedFractionValues;
-
-
-  std::vector<double> simFractionValues;
-  std::vector<double> ptFractionSimFractionValues;
-  std::vector<double> pt2FractionSimFractionValues;
-
-  std::vector<double> simMatchedFractionValues;
-  std::vector<double> ptFractionSimMatchedFractionValues;
-  std::vector<double> pt2FractionSimMatchedFractionValues;
-
-
   for(size_t i=0; i<v.rec_vertices.size(); ++i) {
     
     vertexAssociation::TrackFraction tfReco = calculateVertexSharedTrackFractions(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, vertexAssociation::DividerType::Reco);
@@ -801,14 +847,14 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
     vertexAssociation::TrackFraction tfSimMatched = calculateVertexSharedTrackFractions(*(v.sim_vertex.get()), *(v.rec_vertices[i]), *s2r_, *r2s_, vertexAssociation::DividerType::SimMatched);
 
   
-    double fractionReco = tfReco.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
-    double fractionRecoMatched = tfRecoMatched.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
-    double fractionSim = tfSim.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
-    double fractionSimMatched = tfSimMatched.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
+    double fractionReco = tfReco.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
+    double fractionRecoMatched = tfRecoMatched.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
+    double fractionSim = tfSim.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
+    double fractionSimMatched = tfSimMatched.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
 
-    vertexAssociation::TrackFraction trackFractionArray[4] = { tfReco, tfRecoMatched, tfSim, tfSimMatched };
+    vertexAssociation::TrackFraction trackFractionArray[static_cast<int>(vertexAssociation::DividerType::Size)] = { tfReco, tfRecoMatched, tfSim, tfSimMatched };
 
-    vertexAssociation::FractionSeparation fractionSeparation;    
+    FractionSeparation fractionSeparation;    
 
     mes_[label][prefix+"Reco"]->Fill(fractionReco);
     mes_[label][prefix+"RecoMatched"]->Fill(fractionRecoMatched);
@@ -817,77 +863,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillRecoAssociatedGenVertexHistograms(
 
     if(doDetailedHistograms_)
     {
-      // loop through different association types and fill array that is used for plotting of 
-      // tracks of separated vertices
-      for(  int enumLoopInt = static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Weighted);
-            enumLoopInt != static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Size);
-            enumLoopInt++ )
-      {
-        vertexAssociation::AssociationTypeStringToEnum associationType = static_cast<vertexAssociation::AssociationTypeStringToEnum>(enumLoopInt);
-
-        // loop through denominator types Reco, RecoMatched, Sim and SimMatched
-        for( int j = 0; j < 4; j++)
-        {
-          vertexAssociation::DividerType dividerType = static_cast<vertexAssociation::DividerType>(j);
-          fractionSeparation.set(trackFractionArray[j].getFraction(associationType),associationType,dividerType);
-        }
-      }
-
-      // loop through different association types and fill
-      for(  int enumLoopInt = static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Weighted);
-            enumLoopInt != static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Size);
-            enumLoopInt++ )
-      {
-        vertexAssociation::AssociationTypeStringToEnum associationType = static_cast<vertexAssociation::AssociationTypeStringToEnum>(enumLoopInt);
-
-        // loop through denominator types Reco, RecoMatched, Sim and SimMatched
-        for( int j = 0; j < 4; j++)
-        {
-          vertexAssociation::DividerType dividerType = static_cast<vertexAssociation::DividerType>(j);
-          if( dividerType == vertexAssociation::DividerType::Sim || 
-              dividerType == vertexAssociation::DividerType::SimMatched )
-          {
-            if( associationType == vertexAssociation::AssociationTypeStringToEnum::Pt ||
-                associationType == vertexAssociation::AssociationTypeStringToEnum::Pt2 )
-            {
-              mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]).c_str()]->Fill(fractionSeparation.get(associationType,dividerType));
-
-              // separated plots
-              if( associationType == vertexAssociation::AssociationTypeStringToEnum::Weighted)
-              {
-                for( int k = 1; k < 4; k++ )
-                {
-                  mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-                }
-              }
-              for( int k = 1; k < 4; k++ )
-              {
-                mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-
-              }
-
-            }
-            else
-              continue;
-          }
-          else
-          {
-            mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]).c_str()]->Fill(fractionSeparation.get(associationType,dividerType));
-            
-            // separated plots
-            if( associationType == vertexAssociation::AssociationTypeStringToEnum::Weighted)
-            {
-              for( int k = 1; k < 4; k++ )
-                mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-               
-            }
-
-            for( int k = 1; k < 4; k++ )
-              mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-            
-          }
-        }
-      }
+      fractionSeparation.set(trackFractionArray, mes_, label, ptPrefix);
          
     }
   }
@@ -991,14 +967,14 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
     vertexAssociation::TrackFraction tfSimMatched = calculateVertexSharedTrackFractions(*(v.recVtx), *(v.sim_vertices[i]), *s2r_, *r2s_, vertexAssociation::DividerType::SimMatched);
     
 
-    double fractionReco = tfReco.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
-    double fractionRecoMatched = tfRecoMatched.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
-    double fractionSim = tfSim.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
-    double fractionSimMatched = tfSimMatched.getFraction(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks);
+    double fractionReco = tfReco.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
+    double fractionRecoMatched = tfRecoMatched.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
+    double fractionSim = tfSim.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
+    double fractionSimMatched = tfSimMatched.getFraction(vertexAssociation::AssociationType::NumberOfTracks);
 
     vertexAssociation::TrackFraction trackFractionArray[4] = { tfReco, tfRecoMatched, tfSim, tfSimMatched };
 
-    vertexAssociation::FractionSeparation fractionSeparation;    
+    FractionSeparation fractionSeparation;    
 
     mes_[label][prefix+"Reco"]->Fill(fractionReco);
     mes_[label][prefix+"RecoMatched"]->Fill(fractionRecoMatched);
@@ -1007,80 +983,7 @@ void PrimaryVertexAnalyzer4PUSlimmed::fillGenAssociatedRecoVertexHistograms(
 
     if(doDetailedHistograms_)
     {
-      // loop through different association types and fill array that is used for plotting of 
-      // tracks of separated vertices
-      for(  int enumLoopInt = static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Weighted);
-            enumLoopInt != static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Size);
-            enumLoopInt++ )
-      {
-        vertexAssociation::AssociationTypeStringToEnum associationType = static_cast<vertexAssociation::AssociationTypeStringToEnum>(enumLoopInt);
-
-        // loop through denominator types Reco, RecoMatched, Sim and SimMatched
-        for( int j = 0; j < 4; j++)
-        {
-          vertexAssociation::DividerType dividerType = static_cast<vertexAssociation::DividerType>(j);
-          fractionSeparation.set(trackFractionArray[j].getFraction(associationType),associationType,dividerType);
-        }
-      }
-
-
-      // loop through different association types and fill
-      for(  int enumLoopInt = static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Weighted);
-            enumLoopInt != static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::Size);
-            enumLoopInt++ )
-      {
-
-        vertexAssociation::AssociationTypeStringToEnum associationType = static_cast<vertexAssociation::AssociationTypeStringToEnum>(enumLoopInt);
-
-        // loop through denominator types Reco, RecoMatched, Sim and SimMatched
-        for( int j = 0; j < 4; j++)
-        {
-          vertexAssociation::DividerType dividerType = static_cast<vertexAssociation::DividerType>(j);
-          if( dividerType == vertexAssociation::DividerType::Sim || 
-              dividerType == vertexAssociation::DividerType::SimMatched )
-          {
-            if( associationType == vertexAssociation::AssociationTypeStringToEnum::Weighted ||
-                associationType == vertexAssociation::AssociationTypeStringToEnum::Pt ||
-                associationType == vertexAssociation::AssociationTypeStringToEnum::WPt ||
-                associationType == vertexAssociation::AssociationTypeStringToEnum::Pt2 ||
-                associationType == vertexAssociation::AssociationTypeStringToEnum::WPt2 )
-            {
-               
-              mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]).c_str()]->Fill(fractionSeparation.get(associationType,dividerType));
-
-              // separated plots
-              if( associationType == vertexAssociation::AssociationTypeStringToEnum::Weighted)
-              {
-                for( int k = 1; k < 4; k++ )
-                {
-                  mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-                }
-              }
-              for( int k = 1; k < 4; k++ )
-                mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-
-            }
-            else
-              continue;
-          }
-          else
-          {
-            mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]).c_str()]->Fill(fractionSeparation.get(associationType,dividerType));
-
-            // separated plots
-            if( associationType == vertexAssociation::AssociationTypeStringToEnum::Weighted)
-            {
-              for( int k = 1; k < 4; k++ )
-              {
-                mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-              }
-            }
-            for( int k = 1; k < 4; k++ )
-              mes_[label][std::string(ptPrefix+fractionSeparation.fractionNames[static_cast<int>(dividerType)][static_cast<int>(associationType)]+"_separated"+std::to_string(k)).c_str()]->Fill(fractionSeparation.getSeparatedValue(associationType,dividerType, k-1));
-
-          }
-        }
-      }
+      fractionSeparation.set(trackFractionArray, mes_, label, ptPrefix);
          
     }
     

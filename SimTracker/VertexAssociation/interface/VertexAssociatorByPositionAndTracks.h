@@ -24,7 +24,7 @@ public:
                                       double sharedFraction,
                                       const reco::RecoToSimCollection *trackRecoToSimAssociation,
                                       const reco::SimToRecoCollection *trackSimToRecoAssociation,
-                                      const vertexAssociation::AssociationTypeStringToEnum associationType,
+                                      const vertexAssociation::AssociationType associationType,
                                       const vertexAssociation::DividerType dividerType);
 
   virtual ~VertexAssociatorByPositionAndTracks();
@@ -48,7 +48,7 @@ private:
   const reco::RecoToSimCollection *trackRecoToSimAssociation_;
   const reco::SimToRecoCollection *trackSimToRecoAssociation_;
 
-  vertexAssociation::AssociationTypeStringToEnum associationType_;
+  vertexAssociation::AssociationType associationType_;
   vertexAssociation::DividerType dividerType_;
 
 

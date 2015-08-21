@@ -6,38 +6,44 @@
 #include "SimDataFormats/TrackingAnalysis/interface/TrackingVertex.h"
 
 namespace vertexAssociation {
-  enum class AssociationTypeStringToEnum { NumberOfTracks = 0, Weighted, Pt, WPt, Pt2, WPt2, HarmPt, WHarmPt, HarmWPt, HarmPtAvg, WHarmPtAvg, HarmWPtAvg, Size };
+  enum class AssociationType { NumberOfTracks = 0, Weighted, Pt, WPt, Pt2, WPt2, HarmPt, WHarmPt, HarmWPt, HarmPtAvg, WHarmPtAvg, HarmWPtAvg, Size };
   
-  enum class DividerType { Reco, RecoMatched, Sim, SimMatched };
+  enum class DividerType { Reco = 0, RecoMatched, Sim, SimMatched, Size };
 
-  AssociationTypeStringToEnum getAssociationTypeStringToEnum(const std::string& s);
+  AssociationType associationTypeStringToEnum(const std::string& s);
+  std::string associationTypeEnumToString(const AssociationType& s);
 
   struct TrackFraction  {
-    std::array<double, static_cast<int>(AssociationTypeStringToEnum::Size)> fractions;
-    double getFraction(vertexAssociation::AssociationTypeStringToEnum assoc)
+    std::vector<double> numerators = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std::vector<double> denominators = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    std::array<double, static_cast<int>(AssociationType::Size)> fractions;
+    double getFraction(vertexAssociation::AssociationType assoc)
     {
       int index = static_cast<int>(assoc);
       return fractions[index];
     }
+
+    void calculateNumerators(const reco::Vertex& recoV, const TrackingVertex& simV, const reco::RecoToSimCollection& trackRecoToSimAssociation);
+
+    void calculateNumerators(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation);
+
+    void calculateRecoDenominators(const reco::Vertex& recoV);
+
+    void calculateRecoMatchedDenominators(const reco::Vertex& recoV,  const reco::RecoToSimCollection& trackRecoToSimAssociation);
+
+    void calculateSimDenominators(const TrackingVertex& simV);
+
+    void calculateSimMatchedDenominators(const TrackingVertex& simV,  const reco::SimToRecoCollection& trackSimToRecoAssociation);
+
+    void calculateFractions(DividerType dividerType);
+
   };
 
 }
-
-//unsigned int calculateVertexSharedTrackFractions(const reco::Vertex& recoV, const TrackingVertex& simV, const reco::RecoToSimCollection& trackRecoToSimAssociation, vertexAssociation::DividerType);
 
 vertexAssociation::TrackFraction calculateVertexSharedTrackFractions(const reco::Vertex& recoV, const TrackingVertex& simV, const reco::SimToRecoCollection& trackSimToRecoAssociation, const reco::RecoToSimCollection& trackRecoToSimAssociation, vertexAssociation::DividerType);
 
 vertexAssociation::TrackFraction calculateVertexSharedTrackFractions(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation, const reco::RecoToSimCollection& trackRecoToSimAssociation, vertexAssociation::DividerType);
 
-
-/*
-unsigned int calculateVertexSharedTracks(const reco::Vertex& recoV, const TrackingVertex& simV, const reco::RecoToSimCollection& trackRecoToSimAssociation);
-unsigned int calculateVertexSharedTracks(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation);
-
-std::vector<double> calculateVertexSharedTracksMomentumFractionNumerators(const reco::Vertex& recoV, const TrackingVertex& simV,  const reco::SimToRecoCollection& trackSimToRecoAssociation, const reco::RecoToSimCollection& trackRecoToSimAssociation);
-std::vector<std::vector<double>> calculateVertexSharedTracksMomentumFractionDenominators(const reco::Vertex& recoV, const TrackingVertex& simV,  const reco::SimToRecoCollection& trackSimToRecoAssociation, const reco::RecoToSimCollection& trackRecoToSimAssociation);
-std::vector<double> calculateVertexSharedTracksMomentumFractionNumerators(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation, const reco::RecoToSimCollection& trackRecoToSimAssociation);
-std::vector<std::vector<double>> calculateVertexSharedTracksMomentumFractionDenominators(const TrackingVertex& simV, const reco::Vertex& recoV, const reco::SimToRecoCollection& trackSimToRecoAssociation, const reco::RecoToSimCollection& trackRecoToSimAssociation);
-*/
 #endif
 

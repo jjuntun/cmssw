@@ -34,8 +34,8 @@ private:
 
   edm::EDGetTokenT<reco::RecoToSimCollection> trackRecoToSimAssociationToken_;
   edm::EDGetTokenT<reco::SimToRecoCollection> trackSimToRecoAssociationToken_;
-  vertexAssociation::AssociationTypeStringToEnum associationType_;
-  vertexAssociation::DividerType dividerType_;
+  const vertexAssociation::AssociationType associationType_;
+  const vertexAssociation::DividerType dividerType_;
 };
 
 VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracksProducer(const edm::ParameterSet& config):
@@ -46,10 +46,9 @@ VertexAssociatorByPositionAndTracksProducer::VertexAssociatorByPositionAndTracks
   doDetailedHistograms_(config.getParameter<bool>("doDetailedHistograms")),
   trackRecoToSimAssociationToken_(consumes<reco::RecoToSimCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
   trackSimToRecoAssociationToken_(consumes<reco::SimToRecoCollection>(config.getParameter<edm::InputTag>("trackAssociation"))),
-  associationType_(vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks),
+  associationType_(vertexAssociation::associationTypeStringToEnum(config.getParameter<std::string>("associationType"))),
   dividerType_(vertexAssociation::DividerType::Reco)
 {
-  associationType_ = vertexAssociation::getAssociationTypeStringToEnum(config.getParameter<std::string>("associationType"));
   produces<reco::VertexToTrackingVertexAssociator>();
 }
 

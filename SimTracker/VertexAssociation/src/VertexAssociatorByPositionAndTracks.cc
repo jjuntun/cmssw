@@ -12,7 +12,7 @@ VertexAssociatorByPositionAndTracks::VertexAssociatorByPositionAndTracks(const e
                                                                          double sharedFraction,
                                                                          const reco::RecoToSimCollection *trackRecoToSimAssociation,
                                                                          const reco::SimToRecoCollection *trackSimToRecoAssociation,
-                                                                         const vertexAssociation::AssociationTypeStringToEnum associationType,
+                                                                         const vertexAssociation::AssociationType associationType,
 const vertexAssociation::DividerType dividerType):
   productGetter_(productGetter),
   absZ_(absZ),
@@ -31,38 +31,6 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
                                                                                         const edm::Handle<TrackingVertexCollection>& tVCH) const {
   reco::VertexRecoToSimCollection ret(productGetter_);
 
-  //textual representation of associationType_ for LogTrace
-  std::string associationTypeText;
-  switch(associationType_)
-  {
-    case vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks:
-      associationTypeText = "NumberOfTracks";
-    case vertexAssociation::AssociationTypeStringToEnum::Weighted:
-      associationTypeText = "Weighted";
-    case vertexAssociation::AssociationTypeStringToEnum::Pt:
-      associationTypeText = "Pt";
-    case vertexAssociation::AssociationTypeStringToEnum::WPt:
-      associationTypeText = "WPt";
-    case vertexAssociation::AssociationTypeStringToEnum::Pt2:
-      associationTypeText = "Pt2";
-    case vertexAssociation::AssociationTypeStringToEnum::WPt2:
-      associationTypeText = "WPt2";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmPt:
-      associationTypeText = "HarmPt";
-    case vertexAssociation::AssociationTypeStringToEnum::WHarmPt:
-      associationTypeText = "WHarmPt";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmWPt:
-      associationTypeText = "HarmWPt";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmPtAvg:
-      associationTypeText = "HarmPtAvg";
-    case vertexAssociation::AssociationTypeStringToEnum::WHarmPtAvg:
-      associationTypeText = "WHarmPtAvg";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmWPtAvg:
-      associationTypeText = "HarmWPtAvg";
-    default:
-      associationTypeText = "NumberOfTracks";
-  }
-
   //textual representation of dividerType_ for LogTrace
   std::string dividerTypeText;
   switch(dividerType_)
@@ -75,6 +43,8 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
       dividerTypeText = "Sim";
     case vertexAssociation::DividerType::SimMatched:
       dividerTypeText = "SimMatched";
+    default:
+      dividerTypeText = "Reco";
   }
 
   const edm::View<reco::Vertex>& recoVertices = *vCH;
@@ -118,7 +88,7 @@ reco::VertexRecoToSimCollection VertexAssociatorByPositionAndTracks::associateRe
 
         if(sharedFraction_ < 0 || fraction > sharedFraction_) {
           LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
-                                        << " numerator Reco " << associationTypeText
+                                        << " numerator Reco " << vertexAssociation::associationTypeEnumToString(associationType_)
                                         << " denominator " << dividerTypeText
                                         << " shared fraction " << fraction << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks();
 
@@ -140,38 +110,6 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
                                                                                         const edm::Handle<TrackingVertexCollection>& tVCH) const {
   reco::VertexSimToRecoCollection ret(productGetter_);
 
-  //textual representation of associationType_ for LogTrace
-  std::string associationTypeText;
-  switch(associationType_)
-  {
-    case vertexAssociation::AssociationTypeStringToEnum::NumberOfTracks:
-      associationTypeText = "NumberOfTracks";
-    case vertexAssociation::AssociationTypeStringToEnum::Weighted:
-      associationTypeText = "Weighted";
-    case vertexAssociation::AssociationTypeStringToEnum::Pt:
-      associationTypeText = "Pt";
-    case vertexAssociation::AssociationTypeStringToEnum::WPt:
-      associationTypeText = "WPt";
-    case vertexAssociation::AssociationTypeStringToEnum::Pt2:
-      associationTypeText = "Pt2";
-    case vertexAssociation::AssociationTypeStringToEnum::WPt2:
-      associationTypeText = "WPt2";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmPt:
-      associationTypeText = "HarmPt";
-    case vertexAssociation::AssociationTypeStringToEnum::WHarmPt:
-      associationTypeText = "WHarmPt";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmWPt:
-      associationTypeText = "HarmWPt";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmPtAvg:
-      associationTypeText = "HarmPtAvg";
-    case vertexAssociation::AssociationTypeStringToEnum::WHarmPtAvg:
-      associationTypeText = "WHarmPtAvg";
-    case vertexAssociation::AssociationTypeStringToEnum::HarmWPtAvg:
-      associationTypeText = "HarmWPtAvg";
-    default:
-      associationTypeText = "NumberOfTracks";
-  }
-
   //textual representation of dividerType_ for LogTrace
   std::string dividerTypeText;
   switch(dividerType_)
@@ -184,6 +122,8 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
       dividerTypeText = "Sim";
     case vertexAssociation::DividerType::SimMatched:
       dividerTypeText = "SimMatched";
+    default:
+      dividerTypeText = "Reco";
   }
 
 
@@ -228,7 +168,7 @@ reco::VertexSimToRecoCollection VertexAssociatorByPositionAndTracks::associateSi
         if(sharedFraction_ < 0 || fraction > sharedFraction_) {
 
           LogTrace("VertexAssociation") << "   Matched with significance " << zdiff/recoVertex.zError()
-                                        << " numerator Sim " << associationTypeText
+                                        << " numerator Sim " << vertexAssociation::associationTypeEnumToString(associationType_)
                                         << " denominator " << dividerTypeText
                                         << " shared fraction " << fraction << " reco Tracks " << recoVertex.tracksSize() << " TrackingParticles " << simVertex.nDaughterTracks();
 
