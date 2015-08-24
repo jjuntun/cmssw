@@ -146,5 +146,21 @@ void testOneToManyWithQualityAssociation::proxyUnitTest() {
     CPPUNIT_ASSERT( fabs(*(ref.get()) - values[index++]) < epsilon );
   }
 
+  int index2 = 0;
+  // test iteration
+  for(ProxyIterator<CVal> i = pr.begin(); i != pr.end(); ++i)
+  {
+    CPPUNIT_ASSERT(i.get(index2) == values[index2+2]);
+  }
+  
+  index2 = 0;
+  // test iteration by for-range- loop
+  for(double v : pr)
+  {
+    
+    CPPUNIT_ASSERT(v == values[index2+2]);
+    index2++;
+  }
+  
 }
 
